@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 
 const SignUpPage = () => {
   const [focusedInput, setFocusedInput] = useState(null);
@@ -18,6 +19,12 @@ const SignUpPage = () => {
       setEmailError('');
     }
   };
+  const navigation = useNavigation(); // Get the navigation object
+
+  const navigateToSignIn = () => {
+    navigation.navigate('SignInPage'); // Navigate to the SignInPage
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -100,7 +107,7 @@ const SignUpPage = () => {
 
           <View style={styles.loginContainer}>
             <Text style={styles.normalText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => console.log('Log In pressed')}>
+            <TouchableOpacity onPress={navigateToSignIn}>
               <Text style={styles.linkText}>Log In</Text>
             </TouchableOpacity>
           </View>
