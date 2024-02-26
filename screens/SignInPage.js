@@ -11,7 +11,7 @@ const SignInPage = ({ navigation }) => {
 
   const handleForgotPassword = () => {
     // Navigate to the OTP page
-    // navigation.navigate('OtpPage', { filePath: './OtpPage.js' });
+    navigation.navigate('OtpPage');
   };
   
   const handleCreateAccount = () => {
