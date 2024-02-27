@@ -13,8 +13,7 @@ import AddMaintainceDetails from './screens/AddMaintainceDtails';
 import AppNavigations from './navigations/AppNavagations';
 import { View } from 'react-native';
 import BottomNavigatorPage from './navigations/BotomNavigatonPage';
-// import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
-
+//import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
 
 const App = () => {
   const Stack = createStackNavigator();
@@ -39,7 +38,7 @@ const App = () => {
       {/* <ProfilePage/> */}
       {/* <AddExpensesPage/> */}
       {/* <BottomNavigatorPage/> */}
-
+      {/* <ViewMaintainceDetails/> */}
       {/* <Image source={photo1} style={styles.photo} />
         <Image source={photo2} style={styles.photo} /> */}
 
