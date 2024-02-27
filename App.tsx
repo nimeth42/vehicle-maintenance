@@ -13,6 +13,7 @@ import AddMaintainceDetails from './screens/AddMaintainceDtails';
 import AppNavigations from './navigations/AppNavagations';
 import { View } from 'react-native';
 import BottomNavigatorPage from './navigations/BotomNavigatonPage';
+import HomePage from './screens/HomePage';
 //import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
 
 const App = () => {
@@ -32,7 +33,7 @@ const App = () => {
     //   </Stack.Navigator>
     // </NavigationContainer>
     <>
-      {/* <AppNavigations/> */}
+      <AppNavigations/>
        {/* <AddMaintainceDetails/> */}
        {/* <PieChartPage/>  */}
       {/* <ProfilePage/> */}
@@ -41,7 +42,7 @@ const App = () => {
       {/* <ViewMaintainceDetails/> */}
       {/* <Image source={photo1} style={styles.photo} />
         <Image source={photo2} style={styles.photo} /> */}
-
+      {/* <HomePage/> */}
     </>
   );
 };

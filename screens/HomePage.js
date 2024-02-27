@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Image, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 function CustomButton({ title, onPress }) {
   return (
@@ -9,17 +10,31 @@ function CustomButton({ title, onPress }) {
   );
 }
 
-function App(): JSX.Element {
+
+function HomePage() {
+  const navigation = useNavigation(); // Initialize navigation hook
+
+  const handleAddExpenses = () => {
+    // Navigate to the AddExpensesPage
+    navigation.navigate('AddExpensesPage');
+  };
+
+  const handleAddMaintenances = () => {
+    // Navigate to the AddExpensesPage
+    navigation.navigate('AddMaintainceDetails');
+  };
+
+
   // Assuming vehicleNumber is fetched from the database
   const vehicleNumber = "CAK-0900";
   return (
     <View style={styles.container}>
       <Image
-        source={require('../Drive/assets/img/homebackground.png')}
+        source={require('../assets/assets/homebackground.png')}
         style={styles.backgroundImage}
       />
       <Image
-        source={require('../Drive/assets/img/drivelankalogo.png')}
+        source={require('../assets/assets/drivelankalogo.png')}
         style={styles.logo}
       />
       
@@ -33,10 +48,10 @@ function App(): JSX.Element {
       {/* Button container */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <CustomButton title="Add Expenses" onPress={() => console.log("Button 1 pressed")} />
+          <CustomButton title="Add Expenses" onPress={handleAddExpenses} />
         </View>
         <View style={styles.buttonWrapper}>
-          <CustomButton title="Add Maintenances" onPress={() => console.log("Button 2 pressed")} />
+          <CustomButton title="Add Maintenances" onPress={handleAddMaintenances} />
         </View>
       </View>
 
@@ -90,7 +105,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
     top: '25%',
-    left: '31%',
+    left: '38%',
     alignItems: 'center', // Center children horizontally
     justifyContent: 'center', // Center children vertically
     transform: [{ translateX: -50 }, { translateY: -50 }],
@@ -155,4 +170,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default HomePage;
