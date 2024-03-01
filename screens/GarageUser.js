@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-const AddMaintainceDetails = () => {
+const GarageUser = () => {
     const [state, setState] = useState({
         photo: '',
         note: '', // State to hold the note value
@@ -112,7 +112,7 @@ const AddMaintainceDetails = () => {
     );
 };
 
-export default AddMaintainceDetails;
+export default GarageUser;
 
 const styles = StyleSheet.create({
     container: {
