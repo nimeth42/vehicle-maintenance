@@ -11,6 +11,7 @@ import ProfilePage from './screens/ProfilePage';
 import AddExpensesPage from './screens/AddExpensesPage';
 import AddMaintainceDetails from './screens/AddMaintainceDtails';
 import AppNavigations from './navigations/AppNavagations';
+import GarageUser from './screens/GarageUser';
 import { View } from 'react-native';
 import BottomNavigatorPage from './navigations/BotomNavigatonPage';
 import HomePage from './screens/HomePage';
@@ -33,7 +34,8 @@ const App = () => {
     //   </Stack.Navigator>
     // </NavigationContainer>
     <>
-      <AppNavigations/>
+      {/* <AppNavigations/> */}
+      <GarageUser/>
        {/* <AddMaintainceDetails/> */}
        {/* <PieChartPage/>  */}
       {/* <ProfilePage/> */}
