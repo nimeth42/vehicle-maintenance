@@ -2,15 +2,26 @@
 SDGP project repository for team Code94 (SE-79)
 
 Team Members
+
 • Sandeepa Fernando
+
 • Nimeth Fernando
+
 • Thewmika Randinu
+
 • Oshada Premalal
+
 • Rajiinda Samarasinghe
-• 
 
 
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+
+
+
+
+
+
+
+
 
 # Getting Started
 
