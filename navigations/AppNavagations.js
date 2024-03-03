@@ -11,6 +11,7 @@ import ProfilePage from '../screens/ProfilePage';
 import AddExpensesPage from '../screens/AddExpensesPage';
 import AddMaintainceDetails from '../screens/AddMaintainceDtails';
 import HomePage from '../screens/HomePage';
+import NewPasswordPage from '../screens/NewPasswordPage';
 
 const AppNavigations = () => {
   const Stack = createStackNavigator();
@@ -27,6 +28,8 @@ const AppNavigations = () => {
         <Stack.Screen name="AddExpensesPage" component={AddExpensesPage} />
         <Stack.Screen name="AddMaintainceDetails" component={AddMaintainceDetails} />
         <Stack.Screen name= "HomePage" component={HomePage}/>
+        <Stack.Screen name="NewPassword" component={NewPasswordPage} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
