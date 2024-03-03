@@ -7,6 +7,7 @@ const GarageUser = () => {
         photo: '',
         note: '', // State to hold the note value
         cost: '', // State to hold the cost value
+        vehicleNumber: '', // State to hold the vehicle number value
     });
 
     const option = {
@@ -53,9 +54,13 @@ const GarageUser = () => {
         setState({ ...state, cost: text }); // Update the cost value in state
     }
 
+    const handleVehicleNumberChange = (text) => {
+        setState({ ...state, vehicleNumber: text }); // Update the vehicle number value in state
+    }
+
     const handleSubmit = () => {
-        if (!state.note.trim() || !state.cost.trim() || !state.photo) {
-            // Check if note, cost, or photo is empty
+        if (!state.note.trim() || !state.cost.trim() || !state.photo || !state.vehicleNumber.trim()) {
+            // Check if note, cost, photo, or vehicle number is empty
             toast('Please fill in all fields and select an image');
             return; // Return early if any field is empty
         }
@@ -63,6 +68,7 @@ const GarageUser = () => {
         // Log the submitted values
         console.log('Note:', state.note);
         console.log('Cost:', state.cost);
+        console.log('Vehicle Number:', state.vehicleNumber);
 
         // You can add further logic here to submit the data to your backend or perform other actions
     }
@@ -71,8 +77,15 @@ const GarageUser = () => {
         <View style={styles.container}>
             <StatusBar backgroundColor="black" barStyle="light-content" />
 
-            <Text style={styles.heading}>Add Maintenance Details</Text>
+            <Text style={styles.heading}> Garage User</Text>
             <Text style={styles.textTopic}>Real time updates</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter vehicle number"
+                placeholderTextColor="black"
+                onChangeText={handleVehicleNumberChange} // Call handleVehicleNumberChange when the vehicle number text changes
+                value={state.vehicleNumber} // Set the value of the vehicle number input field
+            />
             <Text style={styles.normalText}>Enter note about maintenance</Text>
             <TextInput
                 style={styles.input}
@@ -97,11 +110,11 @@ const GarageUser = () => {
                     <Text>No image</Text>
                 )}
             </View>
-            <View style={styles.wrapBtn}>
-                <TouchableOpacity onPress={openCamera}>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={openCamera}>
                     <Text style={styles.buttonText}>Open Camera</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={openGallery}>
+                <TouchableOpacity style={styles.button} onPress={openGallery}>
                     <Text style={styles.buttonText}>Open Gallery</Text>
                 </TouchableOpacity>
             </View>
@@ -119,18 +132,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black',
-    },
-    wrapBtn: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: 200,
-        marginTop: 30,
-        backgroundColor: "black",
-        height: 45,
-        alignItems: 'center',
-        padding: 5,
-        borderRadius: 7,
+        backgroundColor: '#222222',
     },
     buttonText: {
         fontSize: 16,
@@ -177,12 +179,18 @@ const styles = StyleSheet.create({
         marginTop: 5,
         marginBottom: 5,
     },
+    buttonContainer: {
+        flexDirection: 'row', // Arrange buttons horizontally
+        justifyContent: 'space-between', // Evenly distribute space between the buttons
+        marginTop: 30,
+    },
     button: {
         backgroundColor: '#FFA500',
-        paddingVertical: 12,
-        borderRadius: 40,
-        margin: 10,
-        width: 200,
+        paddingVertical: 7,
+        width: '38%', // Adjust the width of each button, ensuring there's some space between them
+        borderRadius: 10,
+        alignItems: 'center', // Center the text vertically
+        margin: 5,
     },
     buttonSubmit: {
         backgroundColor: '#FFA500',
@@ -191,16 +199,10 @@ const styles = StyleSheet.create({
         margin: 10,
         width: 200,
     },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: 'white',
-        textAlign: 'center',
-    },
     buttonTextSubmit: {
         fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
-    }
+    },
 });
