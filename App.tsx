@@ -15,6 +15,7 @@ import GarageUser from './screens/GarageUser';
 import { View } from 'react-native';
 import BottomNavigatorPage from './navigations/BotomNavigatonPage';
 import HomePage from './screens/HomePage';
+import NewPasswordPage from './screens/NewPasswordPage';
 //import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
 
 const App = () => {
@@ -35,7 +36,7 @@ const App = () => {
     // </NavigationContainer>
     <>
       {/* <AppNavigations/> */}
-      <GarageUser/>
+      {/* <GarageUser/> */}
        {/* <AddMaintainceDetails/> */}
        {/* <PieChartPage/>  */}
       {/* <ProfilePage/> */}
@@ -45,6 +46,8 @@ const App = () => {
       {/* <Image source={photo1} style={styles.photo} />
         <Image source={photo2} style={styles.photo} /> */}
       {/* <HomePage/> */}
+      <NewPasswordPage/>
+
     </>
   );
 };
