@@ -16,6 +16,7 @@ import { View } from 'react-native';
 import BottomNavigatorPage from './navigations/BotomNavigatonPage';
 import HomePage from './screens/HomePage';
 import NewPasswordPage from './screens/NewPasswordPage';
+import ViewMaintainceDetails from './screens/ViewMaintaince';
 //import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
 
 const App = () => {
@@ -42,11 +43,11 @@ const App = () => {
       {/* <ProfilePage/> */}
       {/* <AddExpensesPage/> */}
       {/* <BottomNavigatorPage/> */}
-      {/* <ViewMaintainceDetails/> */}
+      <ViewMaintainceDetails/>
       {/* <Image source={photo1} style={styles.photo} />
         <Image source={photo2} style={styles.photo} /> */}
       {/* <HomePage/> */}
-      <NewPasswordPage/>
+      {/* <NewPasswordPage/> */}
 
     </>
   );
