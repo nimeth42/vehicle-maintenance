@@ -37,13 +37,13 @@ const App = () => {
     // </NavigationContainer>
     <>
       {/* <AppNavigations/> */}
-      {/* <GarageUser/> */}
+      <GarageUser/>
        {/* <AddMaintainceDetails/> */}
        {/* <PieChartPage/>  */}
       {/* <ProfilePage/> */}
       {/* <AddExpensesPage/> */}
       {/* <BottomNavigatorPage/> */}
-      <ViewMaintainceDetails/>
+      {/* <ViewMaintainceDetails/> */}
       {/* <Image source={photo1} style={styles.photo} />
         <Image source={photo2} style={styles.photo} /> */}
       {/* <HomePage/> */}
