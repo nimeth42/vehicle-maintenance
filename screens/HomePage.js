@@ -24,6 +24,15 @@ function HomePage() {
     navigation.navigate('AddMaintainceDetails');
   };
 
+  const handleViewMaintenances = () => {
+    // Navigate to the AddExpensesPage
+    navigation.navigate('ViewMaintainceDetails');
+  };
+  const handleViewExpences = () => {
+    // Navigate to the AddExpensesPage
+    navigation.navigate('PieChartPage');
+  };
+
 
   // Assuming vehicleNumber is fetched from the database
   const vehicleNumber = "CAK-0900";
@@ -63,10 +72,10 @@ function HomePage() {
       {/* Bottom button container */}
       <View style={styles.bottomButtonContainer}>
         <View style={styles.whiteSquare}>
-          <CustomButton title="View Expenses" onPress={() => console.log("View Expenses pressed")} />
+          <CustomButton title="View Expenses" onPress={handleViewExpences} />
         </View>
         <View style={styles.whiteSquare}>
-          <CustomButton title="View Maintenance Record" onPress={() => console.log("View Maintenance Record pressed")} />
+          <CustomButton title="View Maintenance Record" onPress={handleViewMaintenances} />
         </View>
       </View>
     </View>

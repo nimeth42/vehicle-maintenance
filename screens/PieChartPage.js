@@ -1,8 +1,12 @@
-import React from 'react';
-import { View, StyleSheet, Text,TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const PieChartPage = () => {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
   const handleBackPress = () => {
     navigation.goBack();
   };
@@ -30,12 +34,23 @@ const PieChartPage = () => {
     },
   ];
 
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      console.log('Selected date:', selectedDate); // Log selected date to console
+    }
+  };
+
+  const showDateTimePicker = () => {
+    setShowDatePicker(true);
+  };
+
   return (
     <View style={styles.container}>
-       <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>Pie Chart</Text>
       <PieChart style={{ height: 200, width: 200 }} data={data} />
       <View style={styles.legendContainer}>
         {data.map((item, index) => (
@@ -45,6 +60,19 @@ const PieChartPage = () => {
           </View>
         ))}
       </View>
+      {showDatePicker && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={selectedDate}
+          mode="date"
+          is24Hour={true}
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
+      <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
+        <Text style={styles.datePickerButtonText}>Select Date</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -57,9 +85,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   title: {
-    position: 'absolute', 
-    top: 180, 
-    textAlign: 'center', 
+    position: 'absolute',
+    top: 180,
+    textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',
     color: '#FFA500',
@@ -72,15 +100,13 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     top: 20,
-    backgroundColor: "#FFA500",
+    backgroundColor: '#FFA500',
     width: 70,
     height: 35,
     borderRadius: 7,
     justifyContent: 'center', // Center content vertically
     alignItems: 'center', // Center content horizontally
     left: -80, // Adjusted to align with the left edge
-    
-    
   },
   backButtonText: {
     fontSize: 18,
@@ -96,11 +122,23 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     marginRight: 5,
-    borderRadius:3,
+    borderRadius: 3,
   },
   legendText: {
     fontSize: 16,
     color: 'white',
+  },
+  datePickerButton: {
+    backgroundColor: '#FFA500',
+    paddingVertical: 12,
+    borderRadius:8,
+    margin: 15,
+    width: 200,
+  },
+  datePickerButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 20,
   },
 });
 
