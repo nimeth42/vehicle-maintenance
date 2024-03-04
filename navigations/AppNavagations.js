@@ -12,13 +12,15 @@ import AddExpensesPage from '../screens/AddExpensesPage';
 import AddMaintainceDetails from '../screens/AddMaintainceDtails';
 import HomePage from '../screens/HomePage';
 import NewPasswordPage from '../screens/NewPasswordPage';
+import GarageUser from '../screens/GarageUser';
+import ViewMaintainceDetails from '../screens/ViewMaintaince';
 
 const AppNavigations = () => {
   const Stack = createStackNavigator();
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="LandingPage" component={LandingPage} />
         <Stack.Screen name="PieChartPage" component={PieChartPage} />
         <Stack.Screen name="OtpPage" component={OtpPage} />
@@ -29,6 +31,11 @@ const AppNavigations = () => {
         <Stack.Screen name="AddMaintainceDetails" component={AddMaintainceDetails} />
         <Stack.Screen name= "HomePage" component={HomePage}/>
         <Stack.Screen name="NewPassword" component={NewPasswordPage} />
+        <Stack.Screen name="GrageUser" component={GarageUser} />
+        <Stack.Screen name="ViewMaintainceDetails" component={ViewMaintainceDetails} />
+
+
+
 
       </Stack.Navigator>
     </NavigationContainer>

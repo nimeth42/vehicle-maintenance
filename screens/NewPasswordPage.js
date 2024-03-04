@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 
 const NewPasswordPage = () => {
+  const navigation = useNavigation(); // Initialize navigation using useNavigation
   const [focusedInput, setFocusedInput] = useState(null);
   const [password, setPassword] = useState('');
   const [reEnterPassword, setReEnterPassword] = useState('');
@@ -14,6 +16,11 @@ const NewPasswordPage = () => {
       setReEnterPasswordError('');
     }
   };
+
+  const handleHomePage = () => {
+    navigation.navigate('HomePage'); // Navigate to the SignUp screen
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -52,7 +59,7 @@ const NewPasswordPage = () => {
           {reEnterPasswordError ? <Text style={styles.errorText}>{reEnterPasswordError}</Text> : null}
         </View>
         <View style={styles.bottomContainer}>
-          <TouchableOpacity style={[styles.button, { alignSelf: 'center' }]} onPress={() => console.log('Submit pressed')}>
+          <TouchableOpacity style={[styles.button, { alignSelf: 'center' }]} onPress={handleHomePage}>
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Submit</Text>
           </TouchableOpacity>
         </View>

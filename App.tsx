@@ -36,8 +36,8 @@ const App = () => {
     //   </Stack.Navigator>
     // </NavigationContainer>
     <>
-      {/* <AppNavigations/> */}
-      <GarageUser/>
+      <AppNavigations/>
+      {/* <GarageUser/> */}
        {/* <AddMaintainceDetails/> */}
        {/* <PieChartPage/>  */}
       {/* <ProfilePage/> */}
@@ -49,6 +49,9 @@ const App = () => {
       {/* <HomePage/> */}
       {/* <NewPasswordPage/> */}
 
+        {/* <SignInPage/> */}
+        {/* <AddMaintainceDetails/> */}
+        {/* <SignInPage/> */}
     </>
   );
 };

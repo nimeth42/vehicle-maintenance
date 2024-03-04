@@ -18,6 +18,14 @@ const SignInPage = ({ navigation }) => {
     navigation.navigate('SignUpPage'); // Navigate to the SignUp screen
   };
 
+  const handleGrageUser = () => {
+    navigation.navigate('GrageUser'); // Navigate to the SignUp screen
+  };
+
+  const handleHomePage = () => {
+    navigation.navigate('HomePage'); // Navigate to the SignUp screen
+  };
+
 
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,12 +85,12 @@ const SignInPage = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.bottomContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => console.log('Sign In pressed')}>
+          <TouchableOpacity style={styles.button} onPress={handleHomePage}>
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Sign In</Text>
           </TouchableOpacity>
           <Text style={styles.orText}>---------------   Or continue with   ----------------</Text>
-          <TouchableOpacity style={[styles.button, styles.googleButton]} onPress={() => console.log('Google pressed')}>
-            <Text style={[styles.buttonText, styles.buttonTextBold, styles.googleButtonText]}>Google</Text>
+          <TouchableOpacity style={[styles.button, styles.googleButton]} onPress={handleGrageUser}>
+            <Text style={[styles.buttonText, styles.buttonTextBold, styles.googleButtonText]}>Grage User</Text>
           </TouchableOpacity>
           <View style={styles.loginContainer}>
             <Text style={styles.normalText}>Don't have an account? </Text>
