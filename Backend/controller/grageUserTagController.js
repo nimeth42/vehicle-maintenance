@@ -90,12 +90,12 @@
 //   });
 // }
 
-const multer = require('multer');
-const upload = multer({dest:'uploads/'})
+// const multer = require('multer');
+// const upload = multer({dest:'uploads/'})
 
-exports.grageUserTag = (req, res, next) => {
-
-
+// exports.grageUserTag = (req, res, next) => {
 
 
-}
+
+
+// }
