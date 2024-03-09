@@ -3,15 +3,15 @@ import { StyleSheet, Text, View, StatusBar, ScrollView, TouchableOpacity } from 
 
 const ViewMaintenanceDetails = () => {
   const [maintenanceData, setMaintenanceData] = React.useState([
-    { id: 1, date: "2024-02-23", note: "This function takes a parameter length specifying the length of the random text to generate. It then iterates length times, randomly selecting characters from the characters string and appending them to the result string. Finally, it returns the generated random text." },
-    { id: 2, date: "2024-02-24", note: "In this corrected version, I've wrapped both the <Text> and <Image> components inside a <View> component for each item in the data array. This ensures that both elements are displayed together for each object" },
-    { id: 3, date: "2024-02-24", note: "In this corrected version, both the <Text> and <Image> components inside a <View> component for each item in the data array. This ensures that both elements are displayed together for each object" },
+    { id: 1, date: "2024-02-23", note: "This function takes a parameter length specifying the length of the random text to generate. It then iterates length times, randomly selecting characters from the characters string and appending them to the result string. Finally, it returns the generated random text.", showButtons: true, backgroundColor: '#FFA500' },
+    { id: 2, date: "2024-02-24", note: "In this corrected version, I've wrapped both the <Text> and <Image> components inside a <View> component for each item in the data array. This ensures that both elements are displayed together for each object", showButtons: true, backgroundColor: '#FFA500' },
+    { id: 3, date: "2024-02-24", note: "In this corrected version, both the <Text> and <Image> components inside a <View> component for each item in the data array. This ensures that both elements are displayed together for each object", showButtons: true, backgroundColor: '#FFA500' },
   ]);
 
   const handleAccept = (id) => {
     const updatedData = maintenanceData.map(item => {
       if (item.id === id) {
-        return { ...item, accepted: true };
+        return { ...item, showButtons: false, backgroundColor: '#CCCCCC' };
       }
       return item;
     });
@@ -24,21 +24,27 @@ const ViewMaintenanceDetails = () => {
   };
 
   const handleView = (id) => {
-    console.log('Viewing item with id:', id);
+    const updatedData = maintenanceData.map(item => {
+      if (item.id === id) {
+        return { ...item, showButtons: false, backgroundColor: '#CCCCCC' };
+      }
+      return item;
+    });
+    setMaintenanceData(updatedData);
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
-      <Text style={styles.title}>Notifications</Text>
+      <Text style={styles.title}>Scan details</Text>
       <ScrollView style={styles.scrollView}>
         <View style={styles.subContainer}>
           {maintenanceData.map((item) => (
-            <View key={item.id} style={styles.itemContainer}>
+            <View key={item.id} style={[styles.itemContainer, { backgroundColor: item.backgroundColor }]}>
               <Text style={styles.text}>Date: {item.date}</Text>
               <Text style={styles.text}>Note: {item.note}</Text>
               <View style={styles.buttonContainer}>
-                {!item.accepted && (
+                {item.showButtons && (
                   <>
                     <TouchableOpacity onPress={() => handleAccept(item.id)} style={[styles.button, styles.acceptButton]}>
                       <Text style={styles.buttonText}>Accept</Text>
@@ -48,7 +54,11 @@ const ViewMaintenanceDetails = () => {
                     </TouchableOpacity>
                   </>
                 )}
-                
+                {item.showButtons && (
+                  <TouchableOpacity onPress={() => handleView(item.id)} style={[styles.button, styles.viewButton]}>
+                    <Text style={styles.buttonText}>View</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           ))}
@@ -79,7 +89,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   itemContainer: {
-    backgroundColor: '#FFA500', // Red background for each item
     marginBottom: 20,
     padding: 10,
     borderRadius: 15,
