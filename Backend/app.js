@@ -5,6 +5,9 @@ const cors = require("cors");
 const mongoClient = require("./mongo-connection");
 mongoClient();
 
+const expenseRoute = require('./expenseRoute');// piechart-sf
+app.use('/api', expenseRoute);// piechart
+
 const expenseRoute = require("./expenseRoute"); //vehicleExpense -SF
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,6 +29,7 @@ app.use("/api/v1/tag",grageTagRoute);
 
 
 app.use('/api', expenseRoute); // Integrating the expense route -VehicleEpense-SF
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
