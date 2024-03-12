@@ -15,7 +15,7 @@ route.get('/expenses', async (req, res) => {
       'selectedExpenseType totalCost',
     );
 
-    // Format data for the pie chart
+    // Format data for the pie chart to be displayed in the pie chart
     const formattedData = expenses.map(expense => ({
       key: expense.selectedExpenseType,
       value: expense.totalCost,
