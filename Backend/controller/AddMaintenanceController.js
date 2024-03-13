@@ -37,8 +37,7 @@ const uploadFile = (req, res) => {
       const uploadResult = await s3.upload(params).promise();
       console.log(`File uploaded successfully: ${uploadResult.Location}`);
 
-      // You can now store the image URL and other data in your database
-      // ...
+     
 
       return res.status(200).json({ message: 'Maintenance data submitted successfully' });
     } catch (error) {
