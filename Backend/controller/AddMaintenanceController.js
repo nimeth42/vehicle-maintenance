@@ -45,7 +45,7 @@ const uploadFile = (req, res) => {
       console.error('Error uploading image to S3:', error);
       return res.status(500).json({ message: 'Error submitting maintenance data' });
     } finally {
-      // Clean up temporary image file (optional)
+     
       fs.unlink(file.path, (err) => {
         if (err) console.error('Error deleting temporary image:', err);
       });
