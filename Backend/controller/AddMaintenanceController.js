@@ -1,11 +1,6 @@
 const AWS = require('aws-sdk');
 const multer = require('multer'); 
 
-// const s3 = new AWS.S3({ 
-//     accessKeyId: 'AKIAU6GD2JKHLGGGSZHN',
-//     secretAccessKey: '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',
-//     region: 'Regious: Asia Pacific (Mumbai) ap-south-1'
-//  });
 
 
 const upload = multer({
