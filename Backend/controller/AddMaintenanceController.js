@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const multer = require('multer'); // Add multer for handling multipart form data
+const multer = require('multer'); 
 
 // const s3 = new AWS.S3({ 
 //     accessKeyId: 'AKIAU6GD2JKHLGGGSZHN',
@@ -7,7 +7,7 @@ const multer = require('multer'); // Add multer for handling multipart form data
 //     region: 'Regious: Asia Pacific (Mumbai) ap-south-1'
 //  });
 
-// Configure multer for image uploads
+
 const upload = multer({
   dest: 'uploads/', // Temporary storage location for images
   limits: { fileSize: 5000000 }, // Limit image size to 5MB (optional)
@@ -20,8 +20,8 @@ const uploadFile = (req, res) => {
       return res.status(500).json({ message: 'Error uploading image' });
     }
 
-    const { file, body } = req; // Access uploaded image and other form data
-    const { note, cost } = body; // Extract note and cost from form data
+    const { file, body } = req; 
+    const { note, cost } = body; 
 
     if (!note.trim() || !cost.trim() || !file) {
       return res.status(400).json({ message: 'Please fill in all fields and select an image' });
