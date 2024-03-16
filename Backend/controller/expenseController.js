@@ -1,11 +1,11 @@
 //controller for expenses
 
 // expenseController.js
-const Expense = require('../expenseModel');
+const Expense = require('../models/expenseModel');
 
 exports.createExpense = async (req, res) => {
   try {
-    const { date, odometer, note, totalCost, selectedExpenseType } = req.body;
+    const {date, odometer, note, totalCost, selectedExpenseType} = req.body;
     const expense = new Expense({
       date,
       odometer,
@@ -14,9 +14,9 @@ exports.createExpense = async (req, res) => {
       selectedExpenseType,
     });
     await expense.save();
-    res.status(201).json({ success: true, data: expense });
+    res.status(201).json({success: true, data: expense});
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: 'Server Error' });
+    res.status(500).json({success: false, error: 'Server Error'});
   }
 };
