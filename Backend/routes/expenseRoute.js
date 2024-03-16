@@ -3,7 +3,7 @@ const express = require('express');
 const route = express.Router();
 const expenseController = require('../controller/expenseController');
 
-const Expense = require('../expenseModel'); // for pieChart the expense route has been located
+const Expense = require('../models/expenseModel'); // for pieChart the expense route has been located
 
 route.post('/expenses', expenseController.createExpense);
 
