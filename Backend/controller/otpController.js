@@ -103,13 +103,6 @@ exports.otpSend = (req, res, next) => {
 
 
 
-
-
-
-
-
-
-
                 
     //           })
     //           .catch(error => {

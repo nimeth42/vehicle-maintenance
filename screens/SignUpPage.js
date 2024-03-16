@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import baseUrl from '../baseUrl/baseUrl'; // Import the baseUrl function
 
 const SignUpPage = () => {
   const [focusedInput, setFocusedInput] = useState(null);
@@ -9,6 +11,9 @@ const SignUpPage = () => {
   const [password, setPassword] = useState('');
   const [reEnterPassword, setReEnterPassword] = useState('');
   const [reEnterPasswordError, setReEnterPasswordError] = useState('');
+  const [vehicleNumber, setVehicleNumber] = useState(''); // State for vehicle number
+
+  const navigation = useNavigation(); // Get the navigation object
 
   // Function to validate email
   const validateEmail = () => {
@@ -19,12 +24,40 @@ const SignUpPage = () => {
       setEmailError('');
     }
   };
-  const navigation = useNavigation(); // Get the navigation object
 
   const navigateToSignIn = () => {
     navigation.navigate('SignInPage'); // Navigate to the SignInPage
   };
-  
+
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/v1/user/register`, {
+        email: email,
+        password: password,
+        plateNo: vehicleNumber // Using vehicleNumber in the request
+      });
+      
+      console.log('Response from backend:', response.data); // Access response data using response.data
+      
+      // After successful sign up, navigate to the home page or any other destination
+      navigation.navigate('HomePage');
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Server responded with error status:', error.response.status);
+        console.error('Error data:', error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received from server:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error in request setup:', error.message);
+      }
+      // Handle errors, such as displaying an error message to the user
+      console.error('Error while signing up:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -34,13 +67,15 @@ const SignUpPage = () => {
       <View style={styles.innerContainer}>
         <View>
           <Text style={styles.subtitle}>Create your account</Text>
-          <Text style={styles.textValue}>Full Name</Text>
+
+          <Text style={styles.textValue}>Vehicle Number</Text>
           <TextInput
-            placeholder="Full Name"
+            placeholder="Vehicle Number"
             placeholderTextColor="black"
-            style={[styles.input, { width: 250 }, focusedInput === 'fullName' && styles.focusedInput]}
-            onFocus={() => setFocusedInput('fullName')}
+            style={[styles.input, { width: 250 }, focusedInput === 'vehicleNumber' && styles.focusedInput]}
+            onFocus={() => setFocusedInput('vehicleNumber')}
             onBlur={() => setFocusedInput(null)}
+            onChangeText={(text) => setVehicleNumber(text)} // Update vehicleNumber state
           />
 
           <Text style={styles.textValue}>Email Address</Text>
@@ -57,7 +92,7 @@ const SignUpPage = () => {
               setEmail(text);
               setEmailError('');
             }}
-            keyboardType="email-address" // Set keyboardType to 'email-address'
+            keyboardType="email-address"
           />
           {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
@@ -94,14 +129,15 @@ const SignUpPage = () => {
           />
           {reEnterPasswordError ? <Text style={styles.errorText}>{reEnterPasswordError}</Text> : null}
         </View>
+
         <View style={styles.bottomContainer}>
-          <TouchableOpacity style={[styles.button, { alignSelf: 'center' }]} onPress={() => console.log('Sign Up pressed')}>
+          <TouchableOpacity style={[styles.button, { alignSelf: 'center' }]} onPress={handleSubmit}>
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Sign Up</Text>
           </TouchableOpacity>
 
           <Text style={styles.orText}>---------------   Or continue with   ----------------</Text>
 
-          <TouchableOpacity style={[styles.button, styles.googleButton, { alignSelf: 'center' }]} onPress={() => console.log('Google pressed')}>
+          <TouchableOpacity style={[styles.button, styles.googleButton, { alignSelf: 'center' }]} onPress={handleSubmit}>
             <Text style={[styles.buttonText, styles.buttonTextBold, styles.googleButtonText]}>Google</Text>
           </TouchableOpacity>
 
@@ -122,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#000', // Black background
   },
   innerContainer: {
     justifyContent: 'center',
@@ -131,21 +167,20 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: 'center', // Center the items horizontally
   },
   title: {
-    fontSize: 30,
-    marginTop: 20,
+    fontSize: 40,
     marginBottom: 20,
     color: 'white',
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 22,
     marginBottom: 10,
     color: '#FFA500',
   },
   textValue: {
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 10,
     color: 'white',
   },
@@ -155,18 +190,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     color: 'black',
-  },
-  focusedInput: {
-    borderColor: '#FFA500',
-    borderWidth: 2,
-  },
-  errorInput: {
-    borderColor: 'red',
-    borderWidth: 1,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 5,
   },
   button: {
     backgroundColor: '#FFA500',
@@ -190,22 +213,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   googleButtonText: {
-    color: '#FFA500',
+    color: '#FFA500', // Change text color to yellow
     textAlign: 'center',
     fontSize: 20,
   },
   orText: {
-    fontSize: 20,
+    fontSize: 15,
     margin: 10,
     textAlign: 'center',
     color: 'white',
   },
   normalText: {
-    fontSize: 20,
+    fontSize: 15,
     color: 'white',
   },
   linkText: {
-    fontSize: 20,
+    fontSize: 15,
     color: '#FFA500',
     fontWeight: 'bold',
   },
@@ -213,6 +236,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 20,
+  },
+  errorInput: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 5,
+  },
+  focusedInput: {
+    borderColor: '#FFA500', // Yellow border color
+    borderWidth: 1,
   },
 });
 

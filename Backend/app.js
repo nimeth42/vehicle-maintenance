@@ -14,11 +14,21 @@ const userRoute = require("./routes/user");//user routing
 
 const otpRoute = require("./routes/otpRoute");//otp routing 
 
-const grageTagRoute = require("./routes/grageUserTagRoute");
+const grageTagRoute = require("./routes/grageUserTagRoute");// tag route
+
+const notificationRoute = require("./routes/notificationRoute");// notification route
+
+const maintainceRoute = require("./routes/maintainceRoute");// notification route
+
+
+
 
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/otp",otpRoute);
 app.use("/api/v1/tag",grageTagRoute);
+app.use("/api/v1/notification",notificationRoute);
+app.use("/api/v1/maintaince",maintainceRoute);
+
 
 module.exports = app;

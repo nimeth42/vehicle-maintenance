@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import axios from 'axios';
+import baseUrl from '../baseUrl/baseUrl';
 
 const SignInPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [vehicleNumber, setVehicleNumber] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isInputFilled, setIsInputFilled] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
@@ -21,11 +24,37 @@ const SignInPage = ({ navigation }) => {
   const handleGrageUser = () => {
     navigation.navigate('GrageUser'); // Navigate to the SignUp screen
   };
-
-  const handleHomePage = () => {
-    navigation.navigate('HomePage'); // Navigate to the SignUp screen
+  
+  const handleHomePage = async () => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/v1/user/login`, {        
+        email: email,
+        password: password,
+        plateNo: vehicleNumber
+      });
+      
+      console.log('Response from backend:', response.data); // Access response data using response.data
+      
+      // After successful login, navigate to the home page
+      navigation.navigate('HomePage');
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Server responded with error status:', error.response.status);
+        console.error('Error data:', error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received from server:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error in request setup:', error.message);
+      }
+      // Handle errors, such as displaying an error message to the user
+      console.error('Error while signing in:', error);
+    }
   };
-
+  
 
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,6 +72,14 @@ const SignInPage = ({ navigation }) => {
     } else {
       setIsInputFilled(false);
     }
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+  };
+
+  const handleVehicleNumberChange = (text) => {
+    setVehicleNumber(text);
   };
 
   return (
@@ -64,22 +101,25 @@ const SignInPage = ({ navigation }) => {
           />
           {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-          <Text style={styles.textValue}>Vehicle Number</Text>
-          <TextInput
-            placeholder="Vehicle Number"
-            placeholderTextColor="black"
-            style={[styles.input, focusedInput === 'vehicleNumber' && styles.focusedInput]}
-            onFocus={() => setFocusedInput('vehicleNumber')}
-          />
-
           <Text style={styles.textValue}>Password</Text>
           <TextInput
             placeholder="Password"
             secureTextEntry={true}
             placeholderTextColor="black"
             style={[styles.input, focusedInput === 'password' && styles.focusedInput]}
+            onChangeText={handlePasswordChange}
             onFocus={() => setFocusedInput('password')}
           />
+          
+          <Text style={styles.textValue}>Vehicle Number</Text>
+          <TextInput
+            placeholder="Vehicle Number"
+            placeholderTextColor="black"
+            style={[styles.input, focusedInput === 'vehicleNumber' && styles.focusedInput]}
+            onChangeText={handleVehicleNumberChange}
+            onFocus={() => setFocusedInput('vehicleNumber')}
+          />
+          
           <TouchableOpacity onPress={handleForgotPassword}>
             <Text style={styles.forgotPassword}>Forget password?</Text>
           </TouchableOpacity>

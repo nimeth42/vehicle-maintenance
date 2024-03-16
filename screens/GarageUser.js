@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import baseUrl from '../baseUrl/baseUrl';
+import axios from 'axios';
 
 const GarageUser = () => {
     const [state, setState] = useState({
@@ -17,7 +19,7 @@ const GarageUser = () => {
     }
 
     const toast = (msg) => {
-        ToastAndroid.show(msg, ToastAndroid.SHORT)
+        Alert.alert('Info', msg);
     }
 
     const openCamera = () => {
@@ -58,19 +60,54 @@ const GarageUser = () => {
         setState({ ...state, vehicleNumber: text }); // Update the vehicle number value in state
     }
 
+
+    // const toast = (msg) => {
+    //     Alert.alert('Info', msg);
+    // }
     const handleSubmit = () => {
         if (!state.note.trim() || !state.cost.trim() || !state.photo || !state.vehicleNumber.trim()) {
-            // Check if note, cost, photo, or vehicle number is empty
             toast('Please fill in all fields and select an image');
-            return; // Return early if any field is empty
+            return;
         }
 
-        // Log the submitted values
-        console.log('Note:', state.note);
-        console.log('Cost:', state.cost);
-        console.log('Vehicle Number:', state.vehicleNumber);
+        const dataObject = {
+            plateNo: state.vehicleNumber,
+            note: state.note,
+            cost: state.cost,
+        };
 
-        // You can add further logic here to submit the data to your backend or perform other actions
+        const dataString = JSON.stringify(dataObject);
+
+        const formData = new FormData();
+        formData.append('data', dataString);
+        formData.append('image', {
+            uri: state.photo,
+            type: 'image/jpeg',
+            name: 'maintenance_image.jpg',
+        });
+
+        axios.post(`${baseUrl}/api/v1/tag/grageUserTag`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+        .then(response => {
+            if (response.data.success) {
+                toast('Maintenance details submitted successfully');
+                setState({
+                    photo: '',
+                    note: '',
+                    cost: '',
+                    vehicleNumber: '',
+                });
+            } else {
+                throw new Error(response.data.comment || 'Failed to submit maintenance details');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Alert.alert('Error', error.message || 'Failed to submit maintenance details');
+        });
     }
 
     return (
