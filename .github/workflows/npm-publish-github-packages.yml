@@ -21,6 +21,7 @@ jobs:
            node-version: ${{ matrix.node-version }}
            cache: 'npm'
       ## Continuous Integration(CI)
-      - run: npm ci
+      - run: cd Backend && npm ci
       ## Continuous Deployment(CD)
+      ## pm2 runs the node application on background and autorefresh the new content
       - run: pm2 restart backendserver
