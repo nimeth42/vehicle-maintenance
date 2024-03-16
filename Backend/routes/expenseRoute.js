@@ -5,7 +5,7 @@ const expenseController = require('../controller/expenseController');
 
 const Expense = require('../expenseModel'); // for pieChart the expense route has been located
 
-route.post('/api/expenses', expenseController.createExpense);
+route.post('/expenses', expenseController.createExpense);
 
 // Route to fetch data for pie chart
 route.get('/expenses', async (req, res) => {
