@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { TouchableOpacity, Image, StyleSheet, Text, View } from "react-native";
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { useNavigation } from '@react-navigation/native';
 
 function CustomButton({ title, onPress }) {
   return (
@@ -10,31 +10,46 @@ function CustomButton({ title, onPress }) {
   );
 }
 
+function NotificationButton({ onPress, hasUnreadNotifications }) {
+  return (
+    <TouchableOpacity
+      style={[
+        styles.notificationButton,
+        hasUnreadNotifications && styles.notificationButtonUnread
+      ]}
+      onPress={onPress}
+    >
+      <Text style={styles.notificationButtonText}>Notification</Text>
+    </TouchableOpacity>
+  );
+}
 
 function HomePage() {
-  const navigation = useNavigation(); // Initialize navigation hook
+  const navigation = useNavigation();
+  const [unreadNotifications, setUnreadNotifications] = useState(true);
 
   const handleAddExpenses = () => {
-    // Navigate to the AddExpensesPage
     navigation.navigate('AddExpensesPage');
   };
 
   const handleAddMaintenances = () => {
-    // Navigate to the AddExpensesPage
     navigation.navigate('AddMaintainceDetails');
   };
 
   const handleViewMaintenances = () => {
-    // Navigate to the AddExpensesPage
     navigation.navigate('ViewMaintainceDetails');
   };
+
   const handleViewExpences = () => {
-    // Navigate to the AddExpensesPage
     navigation.navigate('PieChartPage');
   };
 
+  const handleNotification = () => {
+    // Implement notification functionality here
+    // For example, mark notifications as read
+    setUnreadNotifications(false);
+  };
 
-  // Assuming vehicleNumber is fetched from the database
   const vehicleNumber = "CAK-0900";
   return (
     <View style={styles.container}>
@@ -49,12 +64,14 @@ function HomePage() {
       
       <Text style={styles.text}>DRIVE  LANKA</Text>
 
-      {/* Vehicle number display */}
       <View style={styles.vehicleNumberContainer}>
         <Text style={styles.vehicleNumberText}>{vehicleNumber}</Text>
+        <NotificationButton
+          onPress={handleNotification}
+          hasUnreadNotifications={unreadNotifications}
+        />
       </View>
 
-      {/* Button container */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
           <CustomButton title="Add Expenses" onPress={handleAddExpenses} />
@@ -64,12 +81,10 @@ function HomePage() {
         </View>
       </View>
 
-      {/* Additional button container */}
       <View style={styles.additionalButtonContainer}>
         <CustomButton title="Get Dashboard Indicator Info" onPress={() => console.log("Get Dashboard Indicator pressed")} />
       </View>
 
-      {/* Bottom button container */}
       <View style={styles.bottomButtonContainer}>
         <View style={styles.whiteSquare}>
           <CustomButton title="View Expenses" onPress={handleViewExpences} />
@@ -86,15 +101,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    position: 'relative', // Ensure position relative for absolute positioning
+    position: 'relative',
   },
   logo: {
-    position: 'absolute', // Position absolutely
-    top: 0, // At the top
-    left: 10, // At the left
-    width: 150, // Adjust width as needed
-    height: 120, // Adjust height as needed
-    zIndex: 1, // Ensure logo appears above the background image
+    position: 'absolute',
+    top: 0,
+    left: 10,
+    width: 150,
+    height: 120,
+    zIndex: 1,
   },
   backgroundImage: {
     flex: 1,
@@ -105,7 +120,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     right: 5,
-    color: '#FAA500', // Change text color to FAA500
+    color: '#FAA500',
     fontSize: 25,
     padding: 10,
     zIndex: 1,
@@ -113,28 +128,28 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    top: '25%',
+    top: '30%',
     left: '38%',
-    alignItems: 'center', // Center children horizontally
-    justifyContent: 'center', // Center children vertically
+    alignItems: 'center',
+    justifyContent: 'center',
     transform: [{ translateX: -50 }, { translateY: -50 }],
-    backgroundColor: 'rgba(250, 165, 0, 0.5)', // Transparent yellow box
+    backgroundColor: 'rgba(250, 165, 0, 0.5)',
     padding: 20,
     borderRadius: 20,
     zIndex: 2,
-    
   },
+  
   buttonWrapper: {
     marginVertical: 20,
   },
   button: {
-    backgroundColor: '#FFA500', // Orange background color
+    backgroundColor: '#FFA500',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
   },
   buttonText: {
-    color: 'black', // Text color
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -143,39 +158,53 @@ const styles = StyleSheet.create({
     top: 90,
     left: 10,
     padding: 10,
-    backgroundColor: 'rgba(250, 165, 0, 0.5)', // Transparent yellow box
+    backgroundColor: 'rgba(250, 165, 0, 0.5)',
     borderRadius: 10,
     zIndex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   vehicleNumberText: {
     color: 'black',
     fontSize: 14,
     fontWeight: 'bold',
+    marginRight: 10,
   },
-
+  notificationButton: {
+    backgroundColor: '#FFA500',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+  notificationButtonText: {
+    color: 'black',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  notificationButtonUnread: {
+    backgroundColor: 'red', // Change to red for unread notifications
+  },
   additionalButtonContainer: {
     position: 'absolute',
-    top: '50%', // Adjust top position as needed
+    top: '57%',
     left: '10%',
     right: '10%',
-    //backgroundColor: 'transparent', // Set background color to transparent
     alignItems: 'center',
     zIndex: 2,
+    flexDirection: 'row',
   },
-  
   bottomButtonContainer: {
     position: 'absolute',
     bottom: 20,
     left: 0,
     right: 0,
-    
   },
   whiteSquare: {
     backgroundColor: '#525252',
     alignItems: 'center',
     padding: 20,
     borderRadius: 20,
-    marginVertical: 10, // Separate buttons vertically
+    marginVertical: 10,
   },
 });
 

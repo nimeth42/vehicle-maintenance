@@ -17,6 +17,8 @@ import BottomNavigatorPage from './navigations/BotomNavigatonPage';
 import HomePage from './screens/HomePage';
 import NewPasswordPage from './screens/NewPasswordPage';
 import ViewMaintainceDetails from './screens/ViewMaintaince';
+import ViewNotification from './screens/ViewNotification';
+import ViewScanner from './screens/ViewScanner';
 //import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
 
 const App = () => {
@@ -33,10 +35,14 @@ const App = () => {
     //     <Stack.Screen name="ProfilePage" component={ProfilePage} />
     //     <Stack.Screen name="AddExpensesPage" component={AddExpensesPage} />
     //     <Stack.Screen name="AddMaintainceDetails" component={AddMaintainceDetails} />
+    //     <Stack.Screen name="ViewNotification"> component={ViewNotification} />
+    //    <Stack.Screen name="ViewScanner"> component={ViewScanner} />
+
     //   </Stack.Navigator>
     // </NavigationContainer>
     <>
-      <AppNavigations/>
+    
+      {/* <AppNavigations/> */}
       {/* <GarageUser/> */}
        {/* <AddMaintainceDetails/> */}
        {/* <PieChartPage/>  */}
@@ -52,7 +58,10 @@ const App = () => {
         {/* <SignInPage/> */}
         {/* <AddMaintainceDetails/> */}
         {/* <SignInPage/> */}
-    </>
+        <ViewNotification/>
+        {/* <ViewScanner/> */}
+        
+   </>    
   );
 };
 

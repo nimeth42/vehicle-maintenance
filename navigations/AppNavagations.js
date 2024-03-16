@@ -14,6 +14,8 @@ import HomePage from '../screens/HomePage';
 import NewPasswordPage from '../screens/NewPasswordPage';
 import GarageUser from '../screens/GarageUser';
 import ViewMaintainceDetails from '../screens/ViewMaintaince';
+import ViewNotification from '../screens/ViewNotification';
+import ViewScanner from '../screens/ViewScanner';
 
 const AppNavigations = () => {
   const Stack = createStackNavigator();
@@ -33,6 +35,8 @@ const AppNavigations = () => {
         <Stack.Screen name="NewPassword" component={NewPasswordPage} />
         <Stack.Screen name="GrageUser" component={GarageUser} />
         <Stack.Screen name="ViewMaintainceDetails" component={ViewMaintainceDetails} />
+        <Stack.Screen name="ViewNotifications" component={ViewNotification} />
+        <Stack.Screen name="ViewScanner" component={ViewScanner} />
 
 
 
