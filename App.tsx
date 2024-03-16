@@ -42,7 +42,7 @@ const App = () => {
     // </NavigationContainer>
     <>
     
-      {/* <AppNavigations/> */}
+      { <AppNavigations/> }
       {/* <GarageUser/> */}
        {/* <AddMaintainceDetails/> */}
        {/* <PieChartPage/>  */}
@@ -58,7 +58,7 @@ const App = () => {
         {/* <SignInPage/> */}
         {/* <AddMaintainceDetails/> */}
         {/* <SignInPage/> */}
-        <ViewNotification/>
+        
         {/* <ViewScanner/> */}
         
    </>    
