@@ -20,5 +20,7 @@ jobs:
         with:
            node-version: ${{ matrix.node-version }}
            cache: 'npm'
+      ## Continuous Integration(CI)
       - run: npm ci
+      ## Continuous Deployment(CD)
       - run: pm2 restart backendserver
