@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; //iseEffect was added -SF
+import React, { useState, useEffect } from 'react'; //useEffect was added -SF
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -17,38 +17,69 @@ const PieChartPage = () => {
     navigation.goBack();
   };
 
-  // const fetchExpenses = async (date) => {
-  //   try {
-  //     const response = await fetch(`http://your-backend-url/api/v1/expenses?date=${date.toISOString()}`);
-  //     const data = await response.json();
-  //     setExpensesData(data);
-  //   } catch (error) {
-  //     console.error('Error fetching expenses:', error);
-  //   }
-  // };
+  const fetchExpenses = async (date) => {   // fetching expenses from the database -SF
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/expenses?date=${date.toISOString()}`);
 
-  const data = [
-    {
-      key: 'Amuka Dumaka',
-      value: 45,
-      svg: { fill: 'blue' },
+      const data = await response.json();
+      setExpensesData(data);
+    } catch (error) {
+      console.error('Error fetching expenses:', error);
+    }
+  };
+
+  // Define the data for the PieChart-SF
+  const data = expenseData.map((expense) => ({
+    key: expense.type,
+    value: expense.amount,
+    svg: {
+      fill: getExpenseColor(expense.type),
     },
-    {
-      key: 'Ranjan',
-      value: 90,
-      svg: { fill: 'green' },
-    },
-    {
-      key: 'Google',
-      value: 55,
-      svg: { fill: 'orange' },
-    },
-    {
-      key: 'AKD',
-      value: 190,
-      svg: { fill: 'red' },
-    },
-  ];
+  }));
+
+
+    // Function to get color based on expense type-SF
+    const getExpenseColor = (type) => {
+      switch (type) {
+        case 'fuel':
+          return 'blue';
+        case 'insurance':
+          return 'green';
+        case 'repair':
+          return 'orange';
+        case 'miscellaneous':
+          return 'red';
+        default:
+          return 'gray'; // Default color for unknown types
+      }
+    };
+
+
+  //The below was commented due to it being sample data-SF
+
+  // const data = [
+  //   {
+  //     key: 'fuel',
+  //     value: 45,
+  //     svg: { fill: 'blue' },
+  //   },
+  //   {
+  //     key: 'insurance',
+  //     value: 90,
+  //     svg: { fill: 'green' },
+  //   },
+  //   {
+  //     key: 'repair',
+  //     value: 55,
+  //     svg: { fill: 'orange' },
+  //   },
+  //   {
+  //     key: 'miscellaneous',
+  //     value: 190,
+  //     svg: { fill: 'red' },
+  //   },
+    
+  // ];
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
@@ -62,17 +93,47 @@ const PieChartPage = () => {
     setShowDatePicker(true);
   };
 
-  return (
+  // return (
+  //   <View style={styles.container}>
+  //     <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+  //       <Text style={styles.backButtonText}>Back</Text>
+  //     </TouchableOpacity>
+  //     <PieChart style={{ height: 200, width: 200 }} data={data} />
+  //     <View style={styles.legendContainer}>
+  //       {data.map((item, index) => (
+  //         <View key={item.key} style={styles.legendItem}>
+  //           <View style={[styles.legendColor, { backgroundColor: item.svg.fill }]} />
+  //           <Text style={styles.legendText}>{`  ${item.key}: ${item.value}%`}</Text>
+  //         </View>
+  //       ))}
+  //     </View>
+  //     {showDatePicker && (
+  //       <DateTimePicker
+  //         testID="dateTimePicker"
+  //         value={selectedDate}
+  //         mode="date"
+  //         is24Hour={true}
+  //         display="default"
+  //         onChange={handleDateChange}
+  //       />
+  //     )}
+  //     <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
+  //       <Text style={styles.datePickerButtonText}>Select Date</Text>
+  //     </TouchableOpacity>
+  //   </View>
+  // );
+
+  return ( // adjusted this accordingly-SF
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
       <PieChart style={{ height: 200, width: 200 }} data={data} />
       <View style={styles.legendContainer}>
-        {data.map((item, index) => (
-          <View key={item.key} style={styles.legendItem}>
-            <View style={[styles.legendColor, { backgroundColor: item.svg.fill }]} />
-            <Text style={styles.legendText}>{`  ${item.key}: ${item.value}%`}</Text>
+        {expenseData.map((expense, index) => (
+          <View key={index} style={styles.legendItem}>
+            <View style={[styles.legendColor, { backgroundColor: getExpenseColor(expense.type) }]} />
+            <Text style={styles.legendText}>{`${expense.type}: ${expense.amount}`}</Text>
           </View>
         ))}
       </View>
@@ -91,6 +152,7 @@ const PieChartPage = () => {
       </TouchableOpacity>
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({
