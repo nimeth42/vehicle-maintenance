@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; //iseEffect was added -SF
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,9 +7,25 @@ const PieChartPage = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
+  const [expenseData,setExpensesData]=useState([]); // added -SF
+
+  useEffect(()=>{
+    fetchExpenses(selectedDate);
+  },[selectedDate]);
+
   const handleBackPress = () => {
     navigation.goBack();
   };
+
+  // const fetchExpenses = async (date) => {
+  //   try {
+  //     const response = await fetch(`http://your-backend-url/api/v1/expenses?date=${date.toISOString()}`);
+  //     const data = await response.json();
+  //     setExpensesData(data);
+  //   } catch (error) {
+  //     console.error('Error fetching expenses:', error);
+  //   }
+  // };
 
   const data = [
     {

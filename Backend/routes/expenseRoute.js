@@ -10,8 +10,10 @@ route.post('/expenses', expenseController.createExpense);
 // Route to fetch data for pie chart
 route.get('/expenses', async (req, res) => {
   try {
+    const filter=selectedDate ? {date: {$eq: new Date(selectedDate)}}:{};
+
     // Retrieve data from the database to display the data in the pieChart according to the set data
-    const expenses = await Expense.find().select(
+    const expenses = await Expense.find(filter).select(
       'selectedExpenseType totalCost',
     );
 
