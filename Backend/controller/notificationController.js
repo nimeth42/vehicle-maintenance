@@ -140,15 +140,15 @@ exports.deleteOne = async (req, res, next) => {
             });
         }
 
-        // // Delete all notifications in the database based on the provided _id and plateNo
-        // const deleteResult = await Notification.deleteMany({ plateNo, _id });
-        // if (deleteResult.deletedCount === 0) {
-        //     return res.status(404).json({
-        //         status: "failed",
-        //         comment: "No notifications found for the provided _id and plateNo",
-        //         data: null,
-        //     });
-        // }
+        // Delete all notifications in the database based on the provided _id and plateNo
+        const deleteResult = await Notification.deleteMany({ plateNo, _id });
+        if (deleteResult.deletedCount === 0) {
+            return res.status(404).json({
+                status: "failed",
+                comment: "No notifications found for the provided _id and plateNo",
+                data: null,
+            });
+        }
 
         // // Find the maintenance record
         // const maintenanceRecord = await Maintenance.findOne({ _id });

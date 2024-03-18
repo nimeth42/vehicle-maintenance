@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar, Alert } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import axios from 'axios'; // Import axios for making HTTP requests
+import baseUrl from '../baseUrl/baseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const AddMaintainceDetails = () => {
     const [state, setState] = useState({
         photo: '',
-        note: '', // State to hold the note value
-        cost: '', // State to hold the cost value
+        note: '',
+        cost: '',
+        vehicleNumber: '', // Added state for vehicle number
     });
 
     const option = {
@@ -53,20 +58,66 @@ const AddMaintainceDetails = () => {
         setState({ ...state, cost: text }); // Update the cost value in state
     }
 
-    const handleSubmit = () => {
-        if (!state.note.trim() || !state.cost.trim() || !state.photo) {
-            // Check if note, cost, or photo is empty
-            toast('Please fill in all fields and select an image');
-            return; // Return early if any field is empty
-        }
-
+    const handleSubmit = async () => {
         // Log the submitted values
         console.log('Note:', state.note);
         console.log('Cost:', state.cost);
-
-        // You can add further logic here to submit the data to your backend or perform other actions
+        
+        try {
+            // Retrieve token, email, and plateNo from AsyncStorage
+            const token = await AsyncStorage.getItem('token');
+            const email = await AsyncStorage.getItem('email');
+            const plateNo = await AsyncStorage.getItem('plateNo');
+            console.log("** "+plateNo)
+    
+            // Check if note, cost, photo, or plateNo is empty or undefined
+            if (!state.note || !state.cost || !state.photo || !plateNo) {
+                toast('Please fill in all fields and select an image');
+                return; // Return early if any field is empty or undefined
+            }
+    
+            const dataObject = {
+                plateNo: plateNo,
+                note: state.note,
+                cost: state.cost,
+            };
+    
+            const dataString = JSON.stringify(dataObject);
+    
+            const formData = new FormData();
+            formData.append('data', dataString);
+            formData.append('image', {
+                uri: state.photo,
+                type: 'image/jpeg',
+                name: 'maintenance_image.jpg',
+            });
+    
+            // Make POST request to submit maintenance details
+            const response = await axios.post(`${baseUrl}/api/v1/maintaince/addMiantainceDetails`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`, // Include token in request header
+                },
+            });
+    
+            console.log(response.data.status);
+            if (response.data.success === "success") {
+                toast('Maintenance details submitted successfully');
+                setState({
+                    photo: '',
+                    note: '',
+                    cost: '',
+                    plateNo: '',
+                });
+            } else if(response.data.success === "failed") {
+                throw new Error(response.data.comment);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Alert.alert('Error', error.message || 'Failed to submit maintenance details');
+        }
     }
-
+    
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor="black" barStyle="light-content" />
@@ -177,13 +228,6 @@ const styles = StyleSheet.create({
         marginTop: 5,
         marginBottom: 5,
     },
-    button: {
-        backgroundColor: '#FFA500',
-        paddingVertical: 12,
-        borderRadius: 40,
-        margin: 10,
-        width: 200,
-    },
     buttonSubmit: {
         backgroundColor: '#FFA500',
         paddingVertical: 12,
@@ -191,19 +235,10 @@ const styles = StyleSheet.create({
         margin: 10,
         width: 200,
     },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: 'white',
-        textAlign: 'center',
-    },
     buttonTextSubmit: {
         fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
     }
-
-
-    
 });

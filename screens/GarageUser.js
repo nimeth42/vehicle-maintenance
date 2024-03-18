@@ -70,7 +70,7 @@ const GarageUser = () => {
         }
 
         const dataObject = {
-            plateNo: state.vehicleNumber,
+            plateNo: state.vehicleNumber, 
             note: state.note,
             cost: state.cost,
         };

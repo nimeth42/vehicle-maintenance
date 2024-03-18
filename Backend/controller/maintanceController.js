@@ -101,53 +101,82 @@ exports.addMaintanceDetails = (req, res, next) => {
 
 exports.viewMaintanceDetails = (req, res, next) => {
 
-     // Check if plateNo and _id are provided in the request body
-    if (!req.body.plateNo ) {
-        return res.status(400).json({
-            status: "error",
-            comment: "plateNo and _id are required",
-            data: null,
+    // Check if plateNo is provided in the request body
+   if (!req.body.plateNo ) {
+       return res.status(404).json({
+           status: "error",
+           comment: "plateNo is required",
+           data: null,
+       });
+   }
+
+   const plateNo = req.body.plateNo;
+
+   // Find the user in the database based on the provided plateNo
+   User.findOne({ plateNo: plateNo })
+       .then(user => {
+           // If user not found, return failed status
+           if (!user) {
+               return res.status(404).json({
+                   status: "failed",
+                   comment: "User not found",
+                   data: null,
+               });
+           }
+
+           // Retrieve maintenance records where imageValueCheck is true
+           Maintenance.find({ plateNo: plateNo, imageValueCheck: true })
+           .then(notifications => {
+               return res.status(200).json({
+                   status: "success",
+                   comment: "Notifications retrieved successfully",
+                   data: notifications,
+               });
+           })
+           .catch(error => {
+               console.error("Error retrieving notifications:", error);
+               return res.status(500).json({
+                   status: "error",
+                   comment: "Failed to retrieve notifications",
+                   data: null,
+               });
+           });
+       })
+       .catch(error => {
+           console.error("Error finding user:", error);
+           return res.status(500).json({
+               status: "error",
+               comment: "Failed to find user",
+               data: null,
+           });
         });
-    }
+       
+}
 
-    const plateNo = req.body.plateNo;
+exports.deleteMaintanceDetials = (req, res, next) => {
+    const id = req.body._id;
 
-    // Find the user in the database based on the provided plateNo
-    User.findOne({ plateNo: plateNo })
-        .then(user => {
-            // If user not found, return failed status
-            if (!user) {
+    Maintenance.findOneAndUpdate({ _id: id, imageValueCheck: true }, { imageValueCheck: false })
+        .then(maintenance => {
+            if (!maintenance) {
                 return res.status(404).json({
-                    status: "failed",
-                    comment: "User not found",
+                    status: "error",
+                    comment: "Maintenance record not found or imageValueCheck is already false",
                     data: null,
                 });
             }
-
-            Maintenance.find({ plateNo: plateNo,})
-            .then(notifications => {
-                return res.status(200).json({
-                    status: "success",
-                    comment: "Notifications retrieved successfully",
-                    data: notifications,
-                });
-            })
-            .catch(error => {
-                console.error("Error retrieving notifications:", error);
-                return res.status(500).json({
-                    status: "error",
-                    comment: "Failed to retrieve notifications",
-                    data: null,
-                });
+            return res.status(200).json({
+                status: "success",
+                comment: "successfully delete",
+                data: "",
             });
         })
         .catch(error => {
-            console.error("Error finding user:", error);
+            console.error("Error updating maintenance record:", error);
             return res.status(500).json({
                 status: "error",
-                comment: "Failed to find user",
+                comment: "Failed to update maintenance record",
                 data: null,
             });
-        });
-        
+        });
 }
