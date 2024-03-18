@@ -174,7 +174,9 @@ exports.deleteMaintanceDetials = (req, res, next) => {
             });
         })
         .catch(error => {
+            // Catch any errors during update and log them
             console.error("Error updating maintenance record:", error);
+            // Return a 500 error response indicating a failure
             return res.status(500).json({
                 status: "error",
                 comment: "Failed to update maintenance record",
