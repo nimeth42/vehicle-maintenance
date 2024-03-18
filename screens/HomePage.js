@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { TouchableOpacity, Image, StyleSheet, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { TouchableOpacity, Image, StyleSheet, Text, View, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function CustomButton({ title, onPress }) {
   return (
@@ -27,6 +28,36 @@ function NotificationButton({ onPress, hasUnreadNotifications }) {
 function HomePage() {
   const navigation = useNavigation();
   const [unreadNotifications, setUnreadNotifications] = useState(true);
+  const [storedToken, setStoredToken] = useState(null);
+  const [storedEmail, setStoredEmail] = useState(null);
+  const [storedPlateNo, setStoredPlateNo] = useState(null);
+
+  useEffect(() => {
+    const retrieveData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const email = await AsyncStorage.getItem('email');
+        const plateNo = await AsyncStorage.getItem('plateNo');
+
+        if (token && email && plateNo) {
+          setStoredToken(token);
+          setStoredEmail(email);
+          setStoredPlateNo(plateNo);
+
+          console.log("1; "+ token, " 2 "+ email + " 3 "+ plateNo);
+        } else {
+          // Handle case where data is not available
+          console.log('Token, email, or plateNo is missing.');
+        }
+      } catch (error) {
+        console.error('Error retrieving data:', error);
+        // Handle error appropriately, e.g., show an error message
+        Alert.alert('Error', 'Failed to retrieve data. Please try again later.');
+      }
+    };
+
+    retrieveData();
+  }, []);
 
   const handleAddExpenses = () => {
     navigation.navigate('AddExpensesPage');
@@ -47,10 +78,12 @@ function HomePage() {
   const handleNotification = () => {
     // Implement notification functionality here
     // For example, mark notifications as read
-    setUnreadNotifications(false);
+    // setUnreadNotifications(false);
+    navigation.navigate('ViewNotifications');
   };
 
-  const vehicleNumber = "CAK-0900";
+  const vehicleNumber = storedPlateNo; // Corrected here
+
   return (
     <View style={styles.container}>
       <Image

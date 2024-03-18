@@ -1,36 +1,92 @@
-import React from 'react';
-import { StyleSheet, Text, View, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, StatusBar, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import baseUrl from '../baseUrl/baseUrl'; // Import the baseUrl function
 
 const ViewMaintenanceDetails = () => {
-  const [maintenanceData, setMaintenanceData] = React.useState([
-    { id: 1, date: "2024-02-23", note: "This function takes a parameter length specifying the length of the random text to generate. It then iterates length times, randomly selecting characters from the characters string and appending them to the result string. Finally, it returns the generated random text.", showButtons: true, backgroundColor: '#FFA500' },
-    { id: 2, date: "2024-02-24", note: "In this corrected version, I've wrapped both the <Text> and <Image> components inside a <View> component for each item in the data array. This ensures that both elements are displayed together for each object", showButtons: true, backgroundColor: '#FFA500' },
-    { id: 3, date: "2024-02-24", note: "In this corrected version, both the <Text> and <Image> components inside a <View> component for each item in the data array. This ensures that both elements are displayed together for each object", showButtons: true, backgroundColor: '#FFA500' },
-  ]);
+  const navigation = useNavigation();
+  const [maintenanceData, setMaintenanceData] = useState([]);
+  const [refresh, setRefresh] = useState(false); // State variable to trigger re-render
 
-  const handleAccept = (id) => {
-    const updatedData = maintenanceData.map(item => {
-      if (item.id === id) {
-        return { ...item, showButtons: false, backgroundColor: '#CCCCCC' };
+  useEffect(() => {
+    const retrieveData = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token');
+        const storedEmail = await AsyncStorage.getItem('email');
+        const storedPlateNo = await AsyncStorage.getItem('plateNo');
+
+        // Set token as default header for all axios requests
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+
+        const response = await axios.post(`${baseUrl}/api/v1/notification/displayAll`, {
+          email: storedEmail,
+          plateNo: storedPlateNo
+        });
+
+        setMaintenanceData(response.data.data); // Update state with response data
+      } catch (error) {
+        console.error('Error retrieving data:', error);
+        Alert.alert('Error', 'Failed to retrieve data. Please try again later.');
       }
-      return item;
-    });
-    setMaintenanceData(updatedData);
+    };
+
+    retrieveData();
+  }, [refresh]); // Include refresh in the dependency array
+
+  const handleAccept = async (_id) => {
+    try {
+      const updatedData = maintenanceData.filter(item => item._id !== _id);
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+  
+      await axios.post(`${baseUrl}/api/v1/notification/accept`, {
+        _id: _id,
+        plateNo: storedPlateNo
+      });
+  
+      setMaintenanceData(updatedData);
+      setRefresh(prev => !prev); // Toggle refresh state to trigger re-render
+    } catch (error) {
+      console.error('Error accepting item:', error);
+      Alert.alert('Error', 'Failed to accept item. Please try again later.');
+    }
   };
 
-  const handleDecline = (id) => {
-    const updatedData = maintenanceData.filter(item => item.id !== id);
-    setMaintenanceData(updatedData);
+  const handleDecline = async (_id) => {
+    try {
+      const updatedData = maintenanceData.filter(item => item._id !== _id);
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+  
+      await axios.post(`${baseUrl}/api/v1/notification/deleteOne`, {
+        _id: _id,
+        plateNo: storedPlateNo
+      });
+  
+      setMaintenanceData(updatedData);
+      setRefresh(prev => !prev); // Toggle refresh state to trigger re-render
+    } catch (error) {
+      console.error('Error declining item:', error);
+      Alert.alert('Error', 'Failed to decline item. Please try again later.');
+    }
   };
 
-  const handleView = (id) => {
-    const updatedData = maintenanceData.map(item => {
-      if (item.id === id) {
-        return { ...item, showButtons: false, backgroundColor: '#CCCCCC' };
-      }
-      return item;
-    });
-    setMaintenanceData(updatedData);
+    const handleView = async (_id) => {
+    try {
+      const updatedData = maintenanceData.filter(item => item._id !== _id);
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+  
+      await axios.post(`${baseUrl}/api/v1/notification/viewOne`, {
+        _id: _id,
+        plateNo: storedPlateNo
+      });
+  
+      setMaintenanceData(updatedData);
+      setRefresh(prev => !prev); // Toggle refresh state to trigger re-render
+    } catch (error) {
+      console.error('Error declining item:', error);
+      Alert.alert('Error', 'Failed to decline item. Please try again later.');
+    }
   };
 
   return (
@@ -40,25 +96,19 @@ const ViewMaintenanceDetails = () => {
       <ScrollView style={styles.scrollView}>
         <View style={styles.subContainer}>
           {maintenanceData.map((item) => (
-            <View key={item.id} style={[styles.itemContainer, { backgroundColor: item.backgroundColor }]}>
-              <Text style={styles.text}>Date: {item.date}</Text>
-              <Text style={styles.text}>Note: {item.note}</Text>
+            <View key={item._id} style={[styles.itemContainer, { backgroundColor: item.notificationFlag ? '#a9a9a9' : '#EEA818' }]}>
+               <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'blue' }]}>Date: {item.date}</Text>
+              <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'blue' }]}>Note: {item.note}</Text>
               <View style={styles.buttonContainer}>
-                {item.showButtons && (
-                  <>
-                    <TouchableOpacity onPress={() => handleAccept(item.id)} style={[styles.button, styles.acceptButton]}>
-                      <Text style={styles.buttonText}>Accept</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleDecline(item.id)} style={[styles.button, styles.declineButton]}>
-                      <Text style={styles.buttonText}>Decline</Text>
-                    </TouchableOpacity>
-                  </>
-                )}
-                {item.showButtons && (
-                  <TouchableOpacity onPress={() => handleView(item.id)} style={[styles.button, styles.viewButton]}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity onPress={() => handleAccept(item._id)} style={[styles.button, styles.acceptButton]}>
+                  <Text style={styles.buttonText}>Accept</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleDecline(item._id)} style={[styles.button, styles.declineButton]}>
+                  <Text style={styles.buttonText}>Decline</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleView(item._id)} style={[styles.button, styles.viewButton]}>
+                  <Text style={styles.buttonText}>View</Text>
+                </TouchableOpacity>
               </View>
             </View>
           ))}
@@ -71,7 +121,7 @@ const ViewMaintenanceDetails = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#222222', // Black background
+    backgroundColor: '#222222',
   },
   title: {
     color: '#FFA500',
@@ -92,11 +142,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 10,
     borderRadius: 15,
+    backgroundColor: '#EEA818',
   },
   text: {
-    color: '#fff', // White text color
-    fontSize: 16, // Font size
-    fontWeight: 'bold', // Bold font weight
+    fontSize: 16,
+    fontWeight: 'bold',
     paddingTop: 5,
     paddingBottom: 5,
   },
@@ -112,15 +162,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   acceptButton: {
-    backgroundColor: '#4CAF50', // Green button color for accept
+    backgroundColor: '#4CAF50',
     marginRight: 5,
   },
   declineButton: {
-    backgroundColor: '#F44336', // Red button color for decline
+    backgroundColor: '#F44336',
     marginRight: 5,
   },
   viewButton: {
-    backgroundColor: '#2196F3', // Blue button color for view
+    backgroundColor: '#2196F3',
   },
   buttonText: {
     color: '#fff',

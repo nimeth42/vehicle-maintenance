@@ -4,6 +4,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import baseUrl from '../baseUrl/baseUrl';
 import axios from 'axios';
 
+
 const GarageUser = () => {
     const [state, setState] = useState({
         photo: '',
@@ -61,9 +62,7 @@ const GarageUser = () => {
     }
 
 
-    // const toast = (msg) => {
-    //     Alert.alert('Info', msg);
-    // }
+  
     const handleSubmit = () => {
         if (!state.note.trim() || !state.cost.trim() || !state.photo || !state.vehicleNumber.trim()) {
             toast('Please fill in all fields and select an image');
@@ -92,7 +91,8 @@ const GarageUser = () => {
             },
         })
         .then(response => {
-            if (response.data.success) {
+            console.log(response.data.status);
+            if (response.data.success == "success") {
                 toast('Maintenance details submitted successfully');
                 setState({
                     photo: '',
@@ -100,8 +100,8 @@ const GarageUser = () => {
                     cost: '',
                     vehicleNumber: '',
                 });
-            } else {
-                throw new Error(response.data.comment || 'Failed to submit maintenance details');
+            } else if(response.data.success == "failed") {
+                throw new Error(response.data.comment );
             }
         })
         .catch(error => {

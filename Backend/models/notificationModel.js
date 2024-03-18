@@ -20,13 +20,19 @@ const notificationSchema = mongoose.Schema({
         type: Boolean,
         default: true
     },
+    viewFlag: {
+        type: Boolean,
+        default: true
+    },
     maintanceId: {
         type: String, // Changed from Number to ObjectId
         ref: 'Maintenance', // References the Maintenance model
         required: [true, "Maintenance ID is required"]
     },
-   
+    date: {
+        type: Date,
+        default: Date.now() // Corrected to Date.now()
+    }
 });
 
 module.exports = mongoose.model("Notification", notificationSchema);
-

@@ -17,6 +17,7 @@ import ViewMaintainceDetails from '../screens/ViewMaintaince';
 import ViewNotification from '../screens/ViewNotification';
 import ViewScanner from '../screens/ViewScanner';
 
+
 const AppNavigations = () => {
   const Stack = createStackNavigator();
 

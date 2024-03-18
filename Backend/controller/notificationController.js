@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const Notification = require("../models/notificationModel");
 const User = require("../models/userModel");
-
+const Maintenance = require("../models/maintanceModel");
 
 exports.displayAllNotifications = (req, res, next) => {
     // Check if plateNo is provided in the request body
     if (!req.body.plateNo) {
         return res.status(400).json({
-            status: "error",
+            status: "failed",
             comment: "plateNo is required in the request body",
             data: null,
         });
@@ -27,8 +27,8 @@ exports.displayAllNotifications = (req, res, next) => {
                 });
             }
 
-            // Find all notifications for the user and sort them by createdAt field in descending order
-            Notification.find({ plateNo: plateNo }).sort({ createdAt: -1 })
+            // Find all notifications for the user and sort them by date field in descending order
+            Notification.find({ plateNo: plateNo }).sort({ date: -1 })
                 .then(notifications => {
                     return res.status(200).json({
                         status: "success",
@@ -39,7 +39,7 @@ exports.displayAllNotifications = (req, res, next) => {
                 .catch(error => {
                     console.error("Error retrieving notifications:", error);
                     return res.status(500).json({
-                        status: "error",
+                        status: "failed",
                         comment: "Failed to retrieve notifications",
                         data: null,
                     });
@@ -48,23 +48,18 @@ exports.displayAllNotifications = (req, res, next) => {
         .catch(error => {
             console.error("Error finding user:", error);
             return res.status(500).json({
-                status: "error",
+                status: "failed",
                 comment: "Failed to find user",
                 data: null,
             });
         });
 };
 
-
-
 exports.viewOne = (req, res, next) => {
-    
-
-
     // Check if plateNo and _id are provided in the request body
     if (!req.body.plateNo || !req.body._id) {
         return res.status(400).json({
-            status: "error",
+            status: "failed",
             comment: "plateNo and _id are required",
             data: null,
         });
@@ -86,7 +81,7 @@ exports.viewOne = (req, res, next) => {
             }
 
             // Find the notification in the database based on the provided _id and plateNo
-            Notification.findOneAndUpdate({ plateNo: plateNo, _id: _id }, { notificationFlag: true }, { new: true })
+            Notification.findOneAndUpdate({ plateNo: plateNo, _id: _id }, { viewFlag: false }, { new: true })
                 .then(notification => {
                     if (!notification) {
                         return res.status(404).json({
@@ -105,7 +100,7 @@ exports.viewOne = (req, res, next) => {
                 .catch(error => {
                     console.error("Error updating notification:", error);
                     return res.status(500).json({
-                        status: "error",
+                        status: "failed",
                         comment: "Failed to update notification",
                         data: null,
                     });
@@ -122,66 +117,69 @@ exports.viewOne = (req, res, next) => {
 };
 
 
-exports.deleteOne = (req, res, next) => {
-    // Check if plateNo and _id are provided in the request body
-    if (!req.body.plateNo || !req.body._id) {
-        return res.status(400).json({
+
+exports.deleteOne = async (req, res, next) => {
+    try {
+        // Check if plateNo and _id are provided in the request body
+        const { plateNo, _id } = req.body;
+        if (!plateNo || !_id) {
+            return res.status(400).json({
+                status: "error",
+                comment: "plateNo and _id are required",
+                data: null,
+            });
+        }
+
+        // Find the user in the database based on the provided plateNo
+        const user = await User.findOne({ plateNo });
+        if (!user) {
+            return res.status(404).json({
+                status: "failed",
+                comment: "User not found",
+                data: null,
+            });
+        }
+
+        // // Delete all notifications in the database based on the provided _id and plateNo
+        // const deleteResult = await Notification.deleteMany({ plateNo, _id });
+        // if (deleteResult.deletedCount === 0) {
+        //     return res.status(404).json({
+        //         status: "failed",
+        //         comment: "No notifications found for the provided _id and plateNo",
+        //         data: null,
+        //     });
+        // }
+
+        // // Find the maintenance record
+        // const maintenanceRecord = await Maintenance.findOne({ _id });
+        // if (!maintenanceRecord) {
+        //     return res.status(404).json({
+        //         status: 'failed',
+        //         comment: 'No maintenance record found for the provided _id',
+        //         data: null
+        //     });
+        // }
+
+        // // Update the maintenance record
+        // maintenanceRecord.imageValueCheck = false;
+        // await maintenanceRecord.save();
+
+        return res.status(200).json({
+            status: 'success',
+            comment: 'Image value check updated successfully',
+            data: null
+        });
+    } catch (error) {
+        console.error("Error deleting notifications:", error);
+        return res.status(500).json({
             status: "error",
-            comment: "plateNo and _id are required",
+            comment: "Failed to delete notifications",
             data: null,
         });
     }
-
-    const plateNo = req.body.plateNo;
-    const _id = req.body._id;
-
-    // Find the user in the database based on the provided plateNo
-    User.findOne({ plateNo: plateNo })
-        .then(user => {
-            // If user not found, return failed status
-            if (!user) {
-                return res.status(404).json({
-                    status: "failed",
-                    comment: "User not found",
-                    data: null,
-                });
-            }
-
-            // Delete all notifications in the database based on the provided _id and plateNo
-            Notification.deleteMany({ plateNo: plateNo, _id: _id })
-                .then(result => {
-                    if (result.deletedCount === 0) {
-                        return res.status(404).json({
-                            status: "failed",
-                            comment: "No notifications found for the provided _id and plateNo",
-                            data: null,
-                        });
-                    }
-
-                    return res.status(200).json({
-                        status: "success",
-                        comment: "Notifications deleted successfully",
-                        data: null,
-                    });
-                })
-                .catch(error => {
-                    console.error("Error deleting notifications:", error);
-                    return res.status(500).json({
-                        status: "error",
-                        comment: "Failed to delete notifications",
-                        data: null,
-                    });
-                });
-        })
-        .catch(error => {
-            console.error("Error finding user:", error);
-            return res.status(500).json({
-                status: "error",
-                comment: "Failed to find user",
-                data: null,
-            });
-        });
 };
+
+
 
 
 exports.viewAll = (req, res, next) => {
@@ -244,8 +242,8 @@ exports.viewAll = (req, res, next) => {
         });
 };
 
-
-exports.acceptNotification = (req, res, next) => {
+// acceptNotification function
+exports.acceptNotification = async (req, res, next) => {
     if (!req.body.plateNo || !req.body._id) {
        return res.status(400).json({
            status: "error",
@@ -257,79 +255,52 @@ exports.acceptNotification = (req, res, next) => {
    const plateNo = req.body.plateNo;
    const _id = req.body._id;
 
-    User.findOne({ plateNo: plateNo })
-        .then(user => {
-            if (!user) {
-                return res.status(404).json({
-                    status: "failed",
-                    comment: "User not found",
-                    data: null,
-                });
-            }
-
-            Notification.findOneAndUpdate({ plateNo: plateNo, _id: _id }, { notificationFlag: true }, { new: true })
-                .then(notification => {
-                    if (!notification) {
-                        return res.status(404).json({
-                            status: "failed",
-                            comment: "Notification not found",
-                            data: null,
-                        });
-                    }
-
-                    Maintenance.findOne({ _id })
-                        .then(maintenanceRecord => {
-                            if (maintenanceRecord) {
-                                maintenanceRecord.imageValueCheck = true;
-
-                                return maintenanceRecord.save()
-                                    .then(updatedRecord => {
-                                        return res.status(200).json({
-                                            status: 'success',
-                                            comment: 'Image value check updated successfully',
-                                            data: null
-                                        });
-                                    })
-                                    .catch(error => {
-                                        console.error('Error updating maintenance record:', error);
-                                        return res.status(500).json({
-                                            status: 'failed',
-                                            comment: 'Error updating maintenance record',
-                                            data: null
-                                        });
-                                    });
-                            } else {
-                                return res.status(404).json({
-                                    status: 'failed',
-                                    comment: 'No maintenance record found for the provided _id',
-                                    data: null
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error finding maintenance record:', error);
-                            return res.status(500).json({
-                                status: 'failed',
-                                comment: 'Unknown error',
-                                data: null
-                            });
-                        });
-                })
-                .catch(error => {
-                    console.error("Error updating notification:", error);
-                    return res.status(500).json({
-                        status: "error",
-                        comment: "Failed to update notification",
-                        data: null,
-                    });
-                });
-        })
-        .catch(error => {
-            console.error("Error finding user:", error);
-            return res.status(500).json({
-                status: "error",
-                comment: "Failed to find user",
+   try {
+        // Find the user
+        const user = await User.findOne({ plateNo: plateNo });
+        if (!user) {
+            return res.status(404).json({
+                status: "failed",
+                comment: "User not found",
                 data: null,
             });
+        }
+
+        // Update the notificationFlag
+        const notification = await Notification.findOneAndUpdate({ plateNo: plateNo, _id: _id }, { notificationFlag: true }, { new: true });
+        if (!notification) {
+            return res.status(404).json({
+                status: "failed",
+                comment: "Notification not found",
+                data: null,
+            });
+        }
+
+        // Find the maintenance record
+        const maintenanceRecord = await Maintenance.findOne({ _id: notification.maintanceId });
+        if (!maintenanceRecord) {
+            return res.status(404).json({
+                status: 'failed',
+                comment: 'No maintenance record found for the provided _id',
+                data: null
+            });
+        }
+
+        // Update the maintenance record
+        maintenanceRecord.imageValueCheck = true;
+        await maintenanceRecord.save();
+
+        return res.status(200).json({
+            status: 'success',
+            comment: 'Image value check updated successfully',
+            data: null
         });
+   } catch (error) {
+       console.error("Error accepting notification:", error);
+       return res.status(500).json({
+           status: "error",
+           comment: "Failed to accept notification",
+           data: null,
+       });
+   }
 }

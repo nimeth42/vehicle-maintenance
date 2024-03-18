@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from '
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import baseUrl from '../baseUrl/baseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const SignInPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -25,36 +27,86 @@ const SignInPage = ({ navigation }) => {
     navigation.navigate('GrageUser'); // Navigate to the SignUp screen
   };
   
-  const handleHomePage = async () => {
-    try {
-      const response = await axios.post(`${baseUrl}/api/v1/user/login`, {        
-        email: email,
-        password: password,
-        plateNo: vehicleNumber
-      });
-      
-      console.log('Response from backend:', response.data); // Access response data using response.data
-      
-      // After successful login, navigate to the home page
-      navigation.navigate('HomePage');
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error('Server responded with error status:', error.response.status);
-        console.error('Error data:', error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error('No response received from server:', error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error('Error in request setup:', error.message);
-      }
-      // Handle errors, such as displaying an error message to the user
-      console.error('Error while signing in:', error);
-    }
-  };
+  // const handleHomePage = async () => {
+
+  //   navigation.navigate('HomePage');
+
+
+  //   // try {
+  //   //   const response = await axios.post(`${baseUrl}/api/v1/user/login`, {
+  //   //     email: email,
+  //   //     password: password,
+  //   //     plateNo: vehicleNumber
+  //   //   });
   
+  //   //   console.log('Response from backend:', response.data); // Access response data using response.data
+  
+  //   //   // After successful login, navigate to the home page
+  //   //   navigation.navigate('HomePage');
+  //   // } catch (error) {
+  //   //   if (error.response) {
+  //   //     // The request was made and the server responded with a status code
+  //   //     // that falls out of the range of 2xx
+  //   //     console.error('Server responded with error status:', error.response.status);
+  //   //     console.error('Error data:', error.response.data);
+  //   //   } else if (error.request) {
+  //   //     // The request was made but no response was received
+  //   //     console.error('No response received from server:', error.request);
+  //   //   } else {
+  //   //     // Something happened in setting up the request that triggered an Error
+  //   //     console.error('Error in request setup:', error.message);
+  //   //   }
+  //   //   console.error('Error while signing in:', error);
+  //   // }
+  // };
+  
+
+
+const handleHomePage = async () => {
+
+  // navigation.navigate('HomePage');
+
+  try {
+    const response = await axios.post(`${baseUrl}/api/v1/user/login`, {
+      email: email,
+      password: password,
+      plateNo: vehicleNumber
+    });
+
+    console.log('Response from backend:', response.data); // Access response data using response.data
+
+    // Check if login was successful
+    if (response.data.status === "success") {
+      // Store the token in AsyncStorage
+      await AsyncStorage.setItem('token', response.data.token);
+      
+      // Store the email and plateNo
+      await AsyncStorage.setItem('email', response.data.data.email);
+      await AsyncStorage.setItem('plateNo', response.data.data.plateNo);
+
+      // Retrieve the token, email, and plateNo from AsyncStorage
+      const storedToken = await AsyncStorage.getItem('token');
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+
+      console.log('Retrieved Token:', storedToken);
+      console.log('Retrieved Email:', storedEmail);
+      console.log('Retrieved Plate No:', storedPlateNo);
+
+      // Navigate to the home page
+      navigation.navigate('HomePage');
+    } else if(response.data.status === "failed"){
+      // If login was not successful, display an error message
+      console.log('Login failed:', response.data.comment);
+      Alert.alert('Login Failed', response.data.comment);
+    }
+  } catch (error) {
+    // Handle errors such as network issues, etc.
+    console.error('Error while signing in:', error);
+    Alert.alert('Error', 'Failed to sign in. Please try again later.');
+  }
+};
+
 
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

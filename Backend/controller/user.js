@@ -2,7 +2,8 @@ const User = require("../models/userModel");
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
+const jwt = require('jsonwebtoken');
+const config=require("../config/config");
 
 exports.driverRegister = (req, res, next) => {
   // Hash the provided password
@@ -10,7 +11,7 @@ exports.driverRegister = (req, res, next) => {
     if (err) {
       console.error('Error hashing password:', err);
       return res.status(500).json({
-        status: "failed from register",
+        status: "failed ",
         comment: "Failed to hash password",
         data: null,
       });
@@ -31,7 +32,7 @@ exports.driverRegister = (req, res, next) => {
         console.log(response);
 
         return res.status(200).json({
-          status: "success from register",
+          status: "success ",
           comment: "Success",
           data: null,
         });
@@ -50,63 +51,61 @@ exports.driverRegister = (req, res, next) => {
 };
 
 exports.driverLogin = (req, res, next) => {
-  // const { plateNo, password } = req.body;
-  console.log(req.body);
-  const plateNo = req.body.plateNo;
-  const password = req.body.password;
+  const { plateNo, password,email } = req.body;
 
-  return res.status(200).json({
-    status: "success from login",
-    comment: "success",
-    data: null,
-  });
 
-  // //Find the user in the database based on the provided plateNo
-  // User.findOne({ plateNo: plateNo })
-  //   .then(user => {
-  //     // If user not found, return failed status
-  //     if (!user) {
-  //       return res.status(401).json({
-  //         status: "failed",
-  //         comment: "User not found",
-  //         data: null,
-  //       });
-  //     }
+  
 
-  //     // Compare the provided password with the hashed password from the database
-  //     bcrypt.compare(password, user.password, function(err, result) {
-  //       if (err) {
-  //         console.error('Error comparing passwords:', err);
-  //         return res.status(500).json({
-  //           status: "failed",
-  //           comment: "Internal server error",
-  //           data: null,
-  //         });
-  //       }
+  // Find the user in the database based on the provided plateNo
+  User.findOne({ plateNo: plateNo })
+    .then(user => {
+      // If user not found, return failed status
+      if (!user) {
+        return res.status(401).json({
+          status: "failed",
+          comment: "User not found",
+          data: null,
+        });
+      }
 
-  //       // If passwords match, return success status
-  //       if (result) {
-  //         return res.status(200).json({
-  //           status: "success from login",
-  //           comment: "success",
-  //           data: null,
-  //         });
-  //       } else {
-  //         // If password doesn't match, return failed status
-  //         return res.status(401).json({
-  //           status: "failed",
-  //           comment: "Incorrect password",
-  //           data: null,
-  //         });
-  //       }
-  //     });
-  //   })
-  //   .catch(error => {
-  //     console.error('Error finding user:', error);
-  //     return res.status(500).json({
-  //       status: "failed",
-  //       comment: "Internal server error",
-  //       data: null,
-  //     });
-  //   });
+      // Compare the provided password with the hashed password from the database
+      bcrypt.compare(password, user.password, function(err, result) {
+        if (err) {
+          console.error('Error comparing passwords:', err);
+          return res.status(500).json({
+            status: "failed",
+            comment: "Internal server error",
+            data: null,
+          });
+        }
+
+        // If passwords match, generate JWT token
+        if (result) {
+          // Generate JWT token with user's ID and plateNo as payload
+          const token = jwt.sign({ userId: user._id, plateNo: user.plateNo }, config.userToken, { expiresIn: '1h' });
+          // Send the token in the response
+          return res.status(200).json({
+            status: "success",
+            comment: "Login successful",
+            data:{plateNo:plateNo,email:email},
+            token: token // Send the token in the response
+          });
+        } else {
+          // If password doesn't match, return failed status
+          return res.status(401).json({
+            status: "failed",
+            comment: "Incorrect password",
+            data: null,
+          });
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Error finding user:', error);
+      return res.status(500).json({
+        status: "failed",
+        comment: "Internal server error",
+        data: null,
+      });
+    });
 };
