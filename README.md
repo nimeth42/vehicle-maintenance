@@ -1,4 +1,4 @@
-﻿LankaDrive
+﻿DriveLanka
 SDGP project repository for team Code94 (SE-79)
 
 Team Members
