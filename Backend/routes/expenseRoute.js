@@ -7,6 +7,8 @@ const Expense = require('../models/expenseModel'); // for pieChart the expense r
 
 route.post('/expenses', expenseController.createExpense);
 
+route.post('/pieChart',expenseController.getExpense);
+
 // Route to fetch data for pie chart
 // route.get('/expenses', async (req, res) => {
 //   try {
