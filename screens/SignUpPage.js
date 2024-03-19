@@ -40,7 +40,7 @@ const SignUpPage = () => {
       console.log('Response from backend:', response.data); // Access response data using response.data
       
       // After successful sign up, navigate to the home page or any other destination
-      navigation.navigate('HomePage');
+      navigation.navigate('SignInPage'); // Navigate to the SignInPage
     } catch (error) {
       if (error.response) {
         // The request was made and the server responded with a status code

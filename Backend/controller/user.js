@@ -52,8 +52,6 @@ exports.driverRegister = (req, res, next) => {
 
 exports.driverLogin = (req, res, next) => {
   const { plateNo, password,email } = req.body;
-
-
   
 
   // Find the user in the database based on the provided plateNo
@@ -61,7 +59,8 @@ exports.driverLogin = (req, res, next) => {
     .then(user => {
       // If user not found, return failed status
       if (!user) {
-        return res.status(401).json({
+        console.log("canot find");
+        return res.status(400).json({
           status: "failed",
           comment: "User not found",
           data: null,
@@ -72,7 +71,7 @@ exports.driverLogin = (req, res, next) => {
       bcrypt.compare(password, user.password, function(err, result) {
         if (err) {
           console.error('Error comparing passwords:', err);
-          return res.status(500).json({
+          return res.status(300).json({
             status: "failed",
             comment: "Internal server error",
             data: null,
@@ -91,8 +90,10 @@ exports.driverLogin = (req, res, next) => {
             token: token // Send the token in the response
           });
         } else {
+          console.log("canot find 1");
+
           // If password doesn't match, return failed status
-          return res.status(401).json({
+          return res.status(300).json({
             status: "failed",
             comment: "Incorrect password",
             data: null,
@@ -102,7 +103,7 @@ exports.driverLogin = (req, res, next) => {
     })
     .catch(error => {
       console.error('Error finding user:', error);
-      return res.status(500).json({
+      return res.status(300).json({
         status: "failed",
         comment: "Internal server error",
         data: null,

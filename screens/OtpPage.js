@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, ImageBackground, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, ImageBackground, Alert, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation from react-navigation/native
 
 const OtpPage = () => {
@@ -11,7 +11,7 @@ const OtpPage = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Enter OTP</Text>
@@ -29,7 +29,7 @@ const OtpPage = () => {
       <TouchableOpacity style={styles.button} onPress={handleVerifyOtp} >
         <Text style={styles.buttonText}>Verify OTP</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
