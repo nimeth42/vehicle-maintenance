@@ -116,9 +116,23 @@ const SignInPage = ({ navigation }) => {
         console.log(error.response.data.comment);
         setModalMessage(error.response.data.comment);
         setModalVisible(true);
+      } else if (error.request) {
+        // Network error occurred
+        console.error('Network error:', error.request);
+        // Set error message or take necessary action for network error
+        // For example, display a message to the user indicating network issue
+        setModalMessage('Network error. Please check your internet connection.');
+        setModalVisible(true);
+      } else {
+        // Something else went wrong
+        console.error('Error:', error.message);
+        // Set error message or take necessary action for other types of errors
+        setModalMessage('An error occurred. Please try again later.');
+        setModalVisible(true);
       }
     }
   };
+
   
   
   const validateEmail = () => {

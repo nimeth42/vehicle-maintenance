@@ -8,21 +8,25 @@ import baseUrl from '../baseUrl/baseUrl';
 const OtpPage = () => {
   const [otp, setOtp] = useState('');
   const [email, setEmail] = useState('');
+  const [plateNo, setPlateNo] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false); // Added this state variable
   const navigation = useNavigation();
 
   useEffect(() => {
-    getEmailFromAsyncStorage();
+    getDataFromAsyncStorage();
   }, []);
 
-  const getEmailFromAsyncStorage = async () => {
+  const getDataFromAsyncStorage = async () => {
     try {
       const storedEmail = await AsyncStorage.getItem('email');
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
       const obscuredEmail = obscureEmail(storedEmail);
       setEmail(obscuredEmail);
+      setPlateNo(storedPlateNo);
     } catch (error) {
-      console.error('Error retrieving email from AsyncStorage:', error);
+      console.error('Error retrieving data from AsyncStorage:', error);
     }
   };
 
@@ -37,34 +41,24 @@ const OtpPage = () => {
     return email;
   };
 
-  const handleVerifyOtp = async() => {
-          navigation.navigate('NewPassword');
+  const handleVerifyOtp = async () => {
+    try {
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+      const storedEmail = await AsyncStorage.getItem('email');
 
-    // try {
-    //   const storedPlateNo = await AsyncStorage.getItem('plateNo');
-    //   const storedEmail = await AsyncStorage.getItem('email');
-
-    //   console.log(storedPlateNo, storedEmail);
-
-    //   const response = await axios.post(`${baseUrl}/api/v1/otp/otpCheck`, {
-    //     email: storedEmail,
-    //     plateNo: storedPlateNo,
-    //     otpValue:otp
-    //   });
+      const response = await axios.post(`${baseUrl}/api/v1/otp/otpCheck`, {
+        email: storedEmail,
+        plateNo: storedPlateNo,
+        otpValue: otp
+      });
       
-    //   console.log('Response from backend:', response.data);
-      
-    //   // setModalMessage('OTP Sent Successfully');
-    //   // setModalVisible(true);
-    //   navigation.navigate('NewPassword');
-
-    // } catch (error) {
-    //   // console.error('Error sending OTP:', error);
-    //   if (error.response) {
-    //     setModalMessage(error.response.data.comment);
-    //     setModalVisible(true);
-    //   }
-    // }
+      navigation.navigate('NewPassword');
+    } catch (error) {
+      if (error.response) {
+        setModalMessage(error.response.data.comment);
+        setModalVisible(true);
+      }
+    }
   };
 
   const handleSendOtp = async () => {
@@ -72,23 +66,19 @@ const OtpPage = () => {
       const storedPlateNo = await AsyncStorage.getItem('plateNo');
       const storedEmail = await AsyncStorage.getItem('email');
 
-      console.log(storedPlateNo, storedEmail);
-
       const response = await axios.post(`${baseUrl}/api/v1/otp/otpSend`, {
         email: storedEmail,
         plateNo: storedPlateNo,
-        otpValue:otp
+        otpValue: otp
       });
       
-      console.log('Response from backend:', response.data);
-      
-      setModalMessage('Correct OTP');
-      setModalVisible(true);
+      setModalMessage('OTP send successfully');
+      setModalVisibleOtpSucess(true); // Corrected this line
     } catch (error) {
       console.error('Error sending OTP:', error);
       if (error.response) {
         setModalMessage(error.response.data.comment);
-        setModalVisible(true);
+        setModalVisibleOtpSucess(true); // Corrected this line
       }
     }
   };
@@ -99,7 +89,9 @@ const OtpPage = () => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Enter OTP</Text>
       </View>
+      <Text style={styles.emailText}>Plate NO: {plateNo}</Text>
       <Text style={styles.emailText}>Logged in as {email}</Text>
+
       <TextInput
         style={styles.input}
         onChangeText={(text) => setOtp(text)}
@@ -132,10 +124,28 @@ const OtpPage = () => {
           </View>
         </View>
       </Modal>
+
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSucess} // Changed this line
+        onRequestClose={() => {
+          setModalVisibleOtpSucess(false); // Changed this line
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -213,6 +223,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width:150,
   },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  }
 });
 
 export default OtpPage;

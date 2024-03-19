@@ -5,6 +5,13 @@ const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 const config=require("../config/config");
 
+// Function to validate email format
+const validateEmail = (email) => {
+  // Regular expression to match email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 exports.driverRegister = (req, res, next) => {
   const plateNo = req.body.plateNo;
   const email = req.body.email;
@@ -156,20 +163,40 @@ exports.driverLogin = (req, res, next) => {
 exports.passwordChange = (req, res, next) => {
   const { plateNo, password, email } = req.body;
 
-  // Find the user  plateNo and email
+  // Check if any of the required fields are empty
+  if (!plateNo || !password || !email) {
+    return res.status(400).json({
+      status: "failed",
+      comment: "Plate number, password, and email are required fields.",
+      data: null,
+    });
+  }
+  
+  // Validate email format using the validateEmail function
+  if (!validateEmail(email)) {
+    return res.status(400).json({
+      status: "failed",
+      comment: "Invalid email format.",
+      data: null,
+    });
+  }
+  
+  // Further validation if needed...
+  
+  // Find the user by plate number and email
   User.findOne({ plateNo: plateNo, email: email })
     .then(user => {
-      // If user not foun return failed status
+      // If user not found, return failed status
       if (!user) {
-        console.log("cannot find user");
+        console.log("User not found");
         return res.status(400).json({
           status: "failed",
           comment: "User not found",
           data: null,
         });
       }
-
-      // Hash the new pswd
+  
+      // Hash the new password
       bcrypt.hash(password, 10, (err, hash) => {
         if (err) {
           console.error('Error hashing password:', err);
@@ -179,8 +206,8 @@ exports.passwordChange = (req, res, next) => {
             data: null,
           });
         }
-
-        // Update the user's paswd with the hashed password
+  
+        // Update the user's password with the hashed password
         user.password = hash;
         user.save()
           .then(updatedUser => {
@@ -209,6 +236,7 @@ exports.passwordChange = (req, res, next) => {
         data: null,
       });
     });
+  
 };
 
 

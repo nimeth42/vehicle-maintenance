@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+import baseUrl from '../baseUrl/baseUrl'; // Import the baseUrl function
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const NewPasswordPage = () => {
   const navigation = useNavigation(); // Initialize navigation using useNavigation
@@ -38,11 +41,12 @@ const NewPasswordPage = () => {
       
       console.log('Response from backend:', response.data);
       
-      // setModalMessage('OTP Sent Successfully');
-      // setModalVisible(true);
+      setModalMessage('OTP Sent Successfully');
+      setModalVisible(true);
       navigation.navigate('SignInPage');
 
     } catch (error) {
+      console.log(error);
       // console.error('Error sending OTP:', error);
       if (error.response) {
         setModalMessage(error.response.data.comment);
