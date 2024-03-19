@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, Modal, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import baseUrl from '../baseUrl/baseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 const SignInPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -13,101 +12,73 @@ const SignInPage = ({ navigation }) => {
   const [emailError, setEmailError] = useState('');
   const [isInputFilled, setIsInputFilled] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const handleForgotPassword = () => {
-    // Navigate to the OTP page
     navigation.navigate('OtpPage');
   };
-  
+
   const handleCreateAccount = () => {
-    navigation.navigate('SignUpPage'); // Navigate to the SignUp screen
+    navigation.navigate('SignUpPage');
   };
 
   const handleGrageUser = () => {
-    navigation.navigate('GrageUser'); // Navigate to the SignUp screen
+    navigation.navigate('GrageUser');
+  };
+
+  const handleHomePage = async () => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/v1/user/login`, {
+        email: email,
+        password: password,
+        plateNo: vehicleNumber
+      });
+  
+      console.log('Response from backend:', response.data);
+  
+      // Access specific properties from the response object
+      const { status, comment, data } = response.data;
+      console.log(status); // "failed"
+      console.log(comment); // "User not found"
+      console.log(data); 
+  
+      if (status === "success") {
+        AsyncStorage.setItem('token', data.token);
+        AsyncStorage.setItem('email', data.email);
+        AsyncStorage.setItem('plateNo', data.plateNo);
+  
+        const storedToken = await AsyncStorage.getItem('token');
+        const storedEmail = await AsyncStorage.getItem('email');
+        const storedPlateNo = await AsyncStorage.getItem('plateNo');
+  
+        console.log('Retrieved Token:', storedToken);
+        console.log('Retrieved Email:', storedEmail);
+        console.log('Retrieved Plate No:', storedPlateNo);
+  
+        setSuccessModalVisible(true);
+  
+        setTimeout(() => {
+          navigation.navigate('HomePage');
+        }, 1500);
+      } else if (status === "failed") {
+        console.log('Failed response:', response.data); // Log entire response object
+        if (comment === "User not found" || comment === "Incorrect password") {
+          console.log('Login failed:', comment);
+          Alert.alert('Login Failed', comment);
+        } else {
+          console.log('Other error:', comment);
+          // Handle other error scenarios as needed
+        }
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      // Handle network errors or other unexpected errors
+    }
   };
   
-  // const handleHomePage = async () => {
 
-  //   navigation.navigate('HomePage');
-
-
-  //   // try {
-  //   //   const response = await axios.post(`${baseUrl}/api/v1/user/login`, {
-  //   //     email: email,
-  //   //     password: password,
-  //   //     plateNo: vehicleNumber
-  //   //   });
   
-  //   //   console.log('Response from backend:', response.data); // Access response data using response.data
   
-  //   //   // After successful login, navigate to the home page
-  //   //   navigation.navigate('HomePage');
-  //   // } catch (error) {
-  //   //   if (error.response) {
-  //   //     // The request was made and the server responded with a status code
-  //   //     // that falls out of the range of 2xx
-  //   //     console.error('Server responded with error status:', error.response.status);
-  //   //     console.error('Error data:', error.response.data);
-  //   //   } else if (error.request) {
-  //   //     // The request was made but no response was received
-  //   //     console.error('No response received from server:', error.request);
-  //   //   } else {
-  //   //     // Something happened in setting up the request that triggered an Error
-  //   //     console.error('Error in request setup:', error.message);
-  //   //   }
-  //   //   console.error('Error while signing in:', error);
-  //   // }
-  // };
-  
-
-
-const handleHomePage = async () => {
-
-  // navigation.navigate('HomePage');
-
-  try {
-    const response = await axios.post(`${baseUrl}/api/v1/user/login`, {
-      email: email,
-      password: password,
-      plateNo: vehicleNumber
-    });
-
-    console.log('Response from backend:', response.data); // Access response data using response.data
-
-    // Check if login was successful
-    if (response.data.status === "success") {
-      // Store the token in AsyncStorage
-      await AsyncStorage.setItem('token', response.data.token);
-      
-      // Store the email and plateNo
-      await AsyncStorage.setItem('email', response.data.data.email);
-      await AsyncStorage.setItem('plateNo', response.data.data.plateNo);
-
-      // Retrieve the token, email, and plateNo from AsyncStorage
-      const storedToken = await AsyncStorage.getItem('token');
-      const storedEmail = await AsyncStorage.getItem('email');
-      const storedPlateNo = await AsyncStorage.getItem('plateNo');
-
-      console.log('Retrieved Token:', storedToken);
-      console.log('Retrieved Email:', storedEmail);
-      console.log('Retrieved Plate No:', storedPlateNo);
-
-      // Navigate to the home page
-      navigation.navigate('HomePage');
-    } else if(response.data.status === "failed"){
-      // If login was not successful, display an error message
-      console.log('Login failed:', response.data.comment);
-      Alert.alert('Login Failed', response.data.comment);
-    }
-  } catch (error) {
-    // Handle errors such as network issues, etc.
-    console.error('Error while signing in:', error);
-    Alert.alert('Error', 'Failed to sign in. Please try again later.');
-  }
-};
-
-
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -135,7 +106,7 @@ const handleHomePage = async () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <Text style={styles.title}>DRIVE LANKA</Text>
 
@@ -191,10 +162,25 @@ const handleHomePage = async () => {
             </TouchableOpacity>
           </View>
 
-          <></>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={successModalVisible}
+            onRequestClose={() => {
+              setSuccessModalVisible(false);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Login Successful!</Text>
+                {/* Add your text message here */}
+                <Text style={styles.modalText}>Welcome to the Drive Lanka app.</Text>
+              </View>
+            </View>
+          </Modal>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -203,7 +189,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000', // Black background
+    backgroundColor: '#000',
   },
   innerContainer: {
     justifyContent: 'center',
@@ -212,7 +198,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     marginTop: 20,
-    alignItems: 'center', // Center the items horizontally
+    alignItems: 'center',
   },
   title: {
     fontSize: 40,
@@ -235,20 +221,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     color: 'black',
-    width: 250, // Added width to input fields
+    width: 250,
   },
   button: {
     backgroundColor: '#FFA500',
     paddingVertical: 12,
     borderRadius: 40,
     marginBottom: 10,
-    width:200,
+    width: 200,
   },
   googleButton: {
     backgroundColor: 'transparent',
     borderColor: '#FFA500',
     borderWidth: 2,
-    width:200,
+    width: 200,
   },
   buttonText: {
     color: 'white',
@@ -259,7 +245,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   googleButtonText: {
-    color: '#FFA500', // Change text color to yellow
+    color: '#FFA500',
     textAlign: 'center',
     fontSize: 20,
   },
@@ -286,8 +272,8 @@ const styles = StyleSheet.create({
   forgotPassword: {
     fontSize: 15,
     color: '#FFA500',
-    textDecorationLine: 'underline', // Underline text to make it look like a link
-    marginTop: 10, // Add some margin to separate it from other elements
+    textDecorationLine: 'underline',
+    marginTop: 10,
   },
   errorInput: {
     borderColor: 'red',
@@ -298,9 +284,36 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   focusedInput: {
-    borderColor: '#FFA500', // Yellow border color
+    borderColor: '#FFA500',
     borderWidth: 1,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: '#FFA500',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color:'white'
+
+  }
 });
 
 export default SignInPage;
