@@ -154,17 +154,19 @@ exports.viewMaintanceDetails = (req, res, next) => {
 }
 
 exports.deleteMaintanceDetials = (req, res, next) => {
-    const id = req.body._id;
+    const id = req.body._id; // Get the ID of the maintenance record to be deleted from the request body
 
     Maintenance.findOneAndUpdate({ _id: id, imageValueCheck: true }, { imageValueCheck: false })
         .then(maintenance => {
             if (!maintenance) {
+                // If no record is found, return a 404 error
                 return res.status(404).json({
                     status: "error",
                     comment: "Maintenance record not found or imageValueCheck is already false",
                     data: null,
                 });
             }
+            // If record is found and updated successfully, return a 200 success response
             return res.status(200).json({
                 status: "success",
                 comment: "successfully delete",
@@ -172,7 +174,9 @@ exports.deleteMaintanceDetials = (req, res, next) => {
             });
         })
         .catch(error => {
+            // Catch any errors during update and log them
             console.error("Error updating maintenance record:", error);
+            // Return a 500 error response indicating a failure
             return res.status(500).json({
                 status: "error",
                 comment: "Failed to update maintenance record",
