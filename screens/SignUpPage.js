@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, Modal, Button, SafeAreaView } from 'react-native'; // Import necessary components
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import baseUrl from '../baseUrl/baseUrl'; // Import the baseUrl function
@@ -12,6 +12,9 @@ const SignUpPage = () => {
   const [reEnterPassword, setReEnterPassword] = useState('');
   const [reEnterPasswordError, setReEnterPasswordError] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState(''); // State for vehicle number
+  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [modalMessage, setModalMessage] = useState(''); // State to hold modal message
+  
 
   const navigation = useNavigation(); // Get the navigation object
 
@@ -29,7 +32,22 @@ const SignUpPage = () => {
     navigation.navigate('SignInPage'); // Navigate to the SignInPage
   };
 
+  
   const handleSubmit = async () => {
+    // Validate email
+    validateEmail();
+    
+    // Check if passwords match
+    if (password !== reEnterPassword) {
+      setReEnterPasswordError('Passwords do not match');
+      return; // Stop submission if passwords don't match
+    }
+  
+    // Check if there are any email errors
+    if (emailError) {
+      return; // Stop submission if there are email errors
+    }
+  
     try {
       const response = await axios.post(`${baseUrl}/api/v1/user/register`, {
         email: email,
@@ -39,28 +57,34 @@ const SignUpPage = () => {
       
       console.log('Response from backend:', response.data); // Access response data using response.data
       
-      // After successful sign up, navigate to the home page or any other destination
-      navigation.navigate('SignInPage'); // Navigate to the SignInPage
+      // Show success modal
+      
+
+      
+
+
+      // Reset form fields
+      setEmail('');
+      setPassword('');
+      setReEnterPassword('');
+      setVehicleNumber('');
+      setEmailError('');
+      setReEnterPasswordError('');
+      setTimeout(() => {
+        navigation.navigate('SignInPage');
+      }, 1500);
     } catch (error) {
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error('Server responded with error status:', error.response.status);
-        console.error('Error data:', error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error('No response received from server:', error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error('Error in request setup:', error.message);
+        // If registration fails, set modalMessage and modalVisible to true to display the modal
+        setModalMessage(error.response.data.comment);
+        setModalVisible(true);
       }
-      // Handle errors, such as displaying an error message to the user
-      console.error('Error while signing up:', error);
     }
   };
+  
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <Text style={styles.title}>DRIVE LANKA</Text>
 
@@ -149,10 +173,28 @@ const SignUpPage = () => {
           </View>
         </View>
       </View>
+
+      {/* Modal to display when registration fails */}
+      <Modal
+  animationType="slide"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => {
+    setModalVisible(false);
+  }}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+        <Text style={styles.buttonText}>{modalMessage}</Text>
+      </TouchableOpacity>
     </View>
+  </View>
+</Modal>
+
+    </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -248,6 +290,29 @@ const styles = StyleSheet.create({
   focusedInput: {
     borderColor: '#FFA500', // Yellow border color
     borderWidth: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+  },
+ 
+  modalText: {
+    marginBottom: 20,
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  customButton: {
+    backgroundColor: 'red', // Set the background color of the button to red
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 

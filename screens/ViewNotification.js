@@ -15,7 +15,7 @@ const ViewMaintenanceDetails = () => {
       try {
         const storedToken = await AsyncStorage.getItem('token');
         const storedEmail = await AsyncStorage.getItem('email');
-        const storedPlateNo = await AsyncStorage.getItem('plateNo');
+        const storedPlateNo = await AsyncStorage.getItem(';plateNo')
 
         // Set token as default header for all axios requests
         axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
@@ -39,6 +39,7 @@ const ViewMaintenanceDetails = () => {
     try {
       const updatedData = maintenanceData.filter(item => item._id !== _id);
       const storedPlateNo = await AsyncStorage.getItem('plateNo');
+      
   
       await axios.post(`${baseUrl}/api/v1/notification/accept`, {
         _id: _id,

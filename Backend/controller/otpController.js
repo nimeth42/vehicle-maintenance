@@ -268,12 +268,19 @@ function getRandomInt(min, max) {
        
 
 // // }
-
 exports.otpCheck = (req, res, next) => {
-    const email = req.body.email;
-    const plateNo = req.body.plateNo;
-    const otpValue = req.body.otpValue;
+    const { email, plateNo, otpValue } = req.body;
 
+    // Validate request body
+    if (!email || !plateNo || !otpValue) {
+        return res.status(400).json({
+            status: "failed",
+            comment: "Bad request. Missing required fields.",
+            data: ""
+        });
+    }
+
+    // Find user by email, plateNo, and check if OTP matches
     User.findOne({ plateNo: plateNo, email: email, storedOTP: otpValue })
         .then(user => {
             if (user) {
@@ -358,7 +365,7 @@ exports.otpSend = (req, res, next) => {
                 } else {
                     console.log("Email sent successfully!");
                     console.log("Message ID:", info.messageId);
-                    console.log("Preview URL:", nodemailer.getTestMessageUrl(info)); // Preview URL if you're using a test account
+                 
 
                     // Save OTP in the database
                     User.findOneAndUpdate(
@@ -380,7 +387,7 @@ exports.otpSend = (req, res, next) => {
                             .catch(error => {
                                 console.error("Failed to update storedOTP value:", error);
                             });
-                        }, 2 * 60 * 1000); // 2 minutes
+                        }, 4 * 60 * 1000); // 2 minutes
 
                         return res.status(200).json({
                             status: "success",

@@ -13,6 +13,9 @@ const SignInPage = ({ navigation }) => {
   const [isInputFilled, setIsInputFilled] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [modalMessage, setModalMessage] = useState(''); // State to hold modal message
+
 
   const handleForgotPassword = () => {
     navigation.navigate('OtpPage');
@@ -26,57 +29,96 @@ const SignInPage = ({ navigation }) => {
     navigation.navigate('GrageUser');
   };
 
+  // const handleHomePage = async () => {
+  //   try {
+  //     const response = await axios.post(`${baseUrl}/api/v1/user/login`, {
+  //       email: email,
+  //       password: password,
+  //       plateNo: vehicleNumber
+  //     });
+  
+  //     console.log('Response from backend:', response.data);
+  
+  //     // Access specific properties from the response object
+  //     const { status, comment, data } = response.data;
+  //     console.log(status); // "failed"
+  //     console.log(comment); // "User not found"
+  //     console.log(data); 
+  
+  //     if (status === "success") {
+  //       AsyncStorage.setItem('token', data.token);
+  //       AsyncStorage.setItem('email', data.email);
+  //       AsyncStorage.setItem('plateNo', data.plateNo);
+  
+  //       const storedToken = await AsyncStorage.getItem('token');
+  //       const storedEmail = await AsyncStorage.getItem('email');
+  //       const storedPlateNo = await AsyncStorage.getItem('plateNo');
+  
+  //       console.log('Retrieved Token:', storedToken);
+  //       console.log('Retrieved Email:', storedEmail);
+  //       console.log('Retrieved Plate No:', storedPlateNo);
+  
+  //       setSuccessModalVisible(true);
+  
+  //       setTimeout(() => {
+  //         navigation.navigate('HomePage');
+  //       }, 1500);
+  //     } else if (status === "failed") {
+  //       console.log('Failed response:', response.data); // Log entire response object
+  //       if (comment === "User not found" || comment === "Incorrect password") {
+  //         console.log('Login failed:', comment);
+  //         Alert.alert('Login Failed', comment);
+  //       } else {
+  //         console.log('Other error:', comment);
+  //         // Handle other error scenarios as needed
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error logging in:', error);
+  //     // Handle network errors or other unexpected errors
+  //   }
+  // };
+  
+  
   const handleHomePage = async () => {
+    // Validate email
+    validateEmail();
+  
+    // Check if there are any email errors
+    if (emailError) {
+      return; // Stop submission if there are email errors
+    }
+  
     try {
       const response = await axios.post(`${baseUrl}/api/v1/user/login`, {
         email: email,
         password: password,
-        plateNo: vehicleNumber
+        plateNo: vehicleNumber // Using vehicleNumber in the request
       });
   
-      console.log('Response from backend:', response.data);
+      console.log('Response from backend:', response.data); // Access response data using response.data
   
-      // Access specific properties from the response object
-      const { status, comment, data } = response.data;
-      console.log(status); // "failed"
-      console.log(comment); // "User not found"
-      console.log(data); 
+      // Store token in AsyncStorage
+      await AsyncStorage.setItem('token', response.data.token); // Assuming token is returned from backend
   
-      if (status === "success") {
-        AsyncStorage.setItem('token', data.token);
-        AsyncStorage.setItem('email', data.email);
-        AsyncStorage.setItem('plateNo', data.plateNo);
+    
+      await  AsyncStorage.setItem('email', response.data.data.email);
+      await AsyncStorage.setItem('plateNo', response.data.data.plateNo);
+      // Print the token that has been set
+      const storedToken = await AsyncStorage.getItem('token');
+      console.log('Stored Token:', storedToken);
   
-        const storedToken = await AsyncStorage.getItem('token');
-        const storedEmail = await AsyncStorage.getItem('email');
-        const storedPlateNo = await AsyncStorage.getItem('plateNo');
-  
-        console.log('Retrieved Token:', storedToken);
-        console.log('Retrieved Email:', storedEmail);
-        console.log('Retrieved Plate No:', storedPlateNo);
-  
-        setSuccessModalVisible(true);
-  
-        setTimeout(() => {
-          navigation.navigate('HomePage');
-        }, 1500);
-      } else if (status === "failed") {
-        console.log('Failed response:', response.data); // Log entire response object
-        if (comment === "User not found" || comment === "Incorrect password") {
-          console.log('Login failed:', comment);
-          Alert.alert('Login Failed', comment);
-        } else {
-          console.log('Other error:', comment);
-          // Handle other error scenarios as needed
-        }
-      }
+      // Navigate to Home Page
+      navigation.navigate('HomePage');
     } catch (error) {
-      console.error('Error logging in:', error);
-      // Handle network errors or other unexpected errors
+      if (error.response) {
+        // If login fails, set modalMessage and modalVisible to true to display the modal
+        console.log(error.response.data.comment);
+        setModalMessage(error.response.data.comment);
+        setModalVisible(true);
+      }
     }
   };
-  
-
   
   
   const validateEmail = () => {
@@ -180,6 +222,25 @@ const SignInPage = ({ navigation }) => {
           </Modal>
         </View>
       </View>
+
+
+      <Modal
+  animationType="slide"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => {
+    setModalVisible(false);
+  }}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+        <Text style={styles.buttonText}>{modalMessage}</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
     </SafeAreaView>
   );
 };
@@ -293,27 +354,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 22
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: '#FFA500',
-    borderRadius: 20,
-    padding: 35,
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
   },
+ 
   modalText: {
+    marginBottom: 20,
     fontSize: 18,
     textAlign: 'center',
-    color:'white'
-
-  }
+  },
+  customButton: {
+    backgroundColor: 'red', // Set the background color of the button to red
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+  },
 });
 
 export default SignInPage;

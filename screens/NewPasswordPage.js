@@ -8,6 +8,8 @@ const NewPasswordPage = () => {
   const [password, setPassword] = useState('');
   const [reEnterPassword, setReEnterPassword] = useState('');
   const [reEnterPasswordError, setReEnterPasswordError] = useState('');
+  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [modalMessage, setModalMessage] = useState(''); // State to hold modal message
 
   const validatePasswords = () => {
     if (reEnterPassword !== password) {
@@ -17,8 +19,37 @@ const NewPasswordPage = () => {
     }
   };
 
-  const handleHomePage = () => {
-    navigation.navigate('HomePage'); // Navigate to the SignUp screen
+  const submitPassword = async() => {
+
+    validatePasswords();
+
+
+    try {
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+      const storedEmail = await AsyncStorage.getItem('email');
+
+      console.log(storedPlateNo, storedEmail);
+
+      const response = await axios.post(`${baseUrl}/api/v1/user/changePassword`, {
+        email: storedEmail,
+        plateNo: storedPlateNo,
+        password:password
+      });
+      
+      console.log('Response from backend:', response.data);
+      
+      // setModalMessage('OTP Sent Successfully');
+      // setModalVisible(true);
+      navigation.navigate('SignInPage');
+
+    } catch (error) {
+      // console.error('Error sending OTP:', error);
+      if (error.response) {
+        setModalMessage(error.response.data.comment);
+        setModalVisible(true);
+      }
+    }
+    // navigation.navigate('SignInPage'); // Navigate to the SignUp screen
   };
   
 
@@ -59,7 +90,7 @@ const NewPasswordPage = () => {
           {reEnterPasswordError ? <Text style={styles.errorText}>{reEnterPasswordError}</Text> : null}
         </View>
         <View style={styles.bottomContainer}>
-          <TouchableOpacity style={[styles.button, { alignSelf: 'center' }]} onPress={handleHomePage}>
+          <TouchableOpacity style={[styles.button, { alignSelf: 'center' }]} onPress={submitPassword}>
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Submit</Text>
           </TouchableOpacity>
         </View>
@@ -128,6 +159,29 @@ const styles = StyleSheet.create({
   },
   buttonTextBold: {
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+  },
+ 
+  modalText: {
+    marginBottom: 20,
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  customButton: {
+    backgroundColor: 'red', // Set the background color of the button to red
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 

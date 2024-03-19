@@ -7,6 +7,7 @@ const testController = require("../controller/test");
 //middlewre
 route.post("/register", userController.driverRegister);
 route.post("/login", userController.driverLogin);
+route.post("/changePassword",userController.passwordChange);
 route.post("/test",auth,testController.test)
 
 module.exports = route;

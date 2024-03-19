@@ -120,11 +120,7 @@ exports.grageUserTag = (req, res, next) => {
         });
     }
 
-    // return res.status(200).json({
-    //     status: 'failed',
-    //     comment: 'Missing imageValueCheck in request body',
-    //     data: null
-    // });
+  
 };
 
 
