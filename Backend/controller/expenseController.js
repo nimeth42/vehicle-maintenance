@@ -12,7 +12,9 @@ exports.createExpense = async (req, res) => {
   
       // Parse the date string into a Date object
       const [day, month, year] = date.split('-');
+
       const parsedDate = new Date(`${year}-${month}-${day}`);
+
   
       // Check if any required field is empty
       if (!parsedDate || !odometer || !note || !totalCost || !selectedExpenseType || !plateNo) {
@@ -129,5 +131,8 @@ exports.getExpense = async (req, res) => {
       console.error(error);
       res.status(500).json({ success: 'failed',comment: 'Server Error',data:null });
     }
-  };
+
   
+
+  }
+
