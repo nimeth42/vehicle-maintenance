@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Image, StyleSheet, Text, View, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import baseUrl from '../baseUrl/baseUrl';
 
 function CustomButton({ title, onPress }) {
   return (
@@ -16,7 +18,7 @@ function NotificationButton({ onPress, hasUnreadNotifications }) {
     <TouchableOpacity
       style={[
         styles.notificationButton,
-        hasUnreadNotifications && styles.notificationButtonUnread
+        hasUnreadNotifications ? styles.notificationButtonUnread : null // Apply styles conditionally
       ]}
       onPress={onPress}
     >
@@ -39,12 +41,19 @@ function HomePage() {
         const email = await AsyncStorage.getItem('email');
         const plateNo = await AsyncStorage.getItem('plateNo');
 
+        const response = await axios.post(`${baseUrl}/api/v1/notification/notificationIdentifiy`, {
+          plateNo: plateNo// Using vehicleNumber in the request
+        });
+        console.log(response.data.data);
+
         if (token && email && plateNo) {
           setStoredToken(token);
           setStoredEmail(email);
           setStoredPlateNo(plateNo);
 
-          console.log("1; "+ token, " 2 "+ email + " 3 "+ plateNo);
+          // Assuming response.data.data is a boolean value indicating unread notifications
+          setUnreadNotifications(response.data.data);
+
         } else {
           // Handle case where data is not available
           console.log('Token, email, or plateNo is missing.');
@@ -79,6 +88,7 @@ function HomePage() {
     // Implement notification functionality here
     // For example, mark notifications as read
     // setUnreadNotifications(false);
+    
     navigation.navigate('ViewNotifications');
   };
 
@@ -98,7 +108,7 @@ function HomePage() {
       <Text style={styles.text}>DRIVE  LANKA</Text>
 
       <View style={styles.vehicleNumberContainer}>
-        <Text style={styles.vehicleNumberText}>{vehicleNumber}</Text>
+        <Text style={styles.vehicleNumberText}>Plate No: {vehicleNumber}</Text>
         <NotificationButton
           onPress={handleNotification}
           hasUnreadNotifications={unreadNotifications}
@@ -113,6 +123,7 @@ function HomePage() {
           <CustomButton title="Add Maintenances" onPress={handleAddMaintenances} />
         </View>
       </View>
+      
 
       <View style={styles.additionalButtonContainer}>
         <CustomButton title="Get Dashboard Indicator Info" onPress={() => console.log("Get Dashboard Indicator pressed")} />
@@ -125,6 +136,7 @@ function HomePage() {
         <View style={styles.whiteSquare}>
           <CustomButton title="View Maintenance Record" onPress={handleViewMaintenances} />
         </View>
+        
       </View>
     </View>
   );
@@ -171,7 +183,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     zIndex: 2,
   },
-  
   buttonWrapper: {
     marginVertical: 20,
   },
@@ -239,6 +250,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginVertical: 10,
   },
+  vehicleNumberText:{
+    color:'black',
+    fontSize:18,
+    padding:3
+  },CustomButton:{
+    
+  }
 });
+
 
 export default HomePage;

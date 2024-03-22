@@ -304,3 +304,38 @@ exports.acceptNotification = async (req, res, next) => {
        });
    }
 }
+
+
+
+exports.notificationIdentify = async (req, res, next) => {
+  const plateNo = req.body.plateNo;
+
+  try {
+    // Query the database to find if any document with the specified plateNo has viewFlag set to true
+    const notification = await Notification.findOne({ plateNo: plateNo, viewFlag: true });
+
+    if (notification) {
+      // If a document with viewFlag set to true is found, return a success response
+      return res.status(200).json({
+        status: "success",
+        message: "At least one notification found with viewFlag set to true",
+        data: true // Return the found notification document if needed
+      });
+    } else {
+      // If no document with viewFlag set to true is found, return a not found response
+      return res.status(200).json({
+        status: "failed",
+        message: "No notification found with viewFlag set to true for the specified plate number",
+        data: false
+      });
+    }
+  } catch (error) {
+    // If an error occurs during the database query, return a 500 status with the error message
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+      error: error.message
+    });
+  }
+}
+

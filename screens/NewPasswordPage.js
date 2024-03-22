@@ -41,7 +41,7 @@ const NewPasswordPage = () => {
       
       console.log('Response from backend:', response.data);
       
-      setModalMessage('OTP Sent Successfully');
+      setModalMessage('Success');
       setModalVisible(true);
       navigation.navigate('SignInPage');
 

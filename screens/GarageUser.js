@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar ,Modal, ActivityIndicator } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import baseUrl from '../baseUrl/baseUrl';
 import axios from 'axios';
 
-
 const GarageUser = () => {
+    const [isLoading, setIsLoading] = useState(false); // State to track loading status
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
     const [state, setState] = useState({
         photo: '',
-        note: '', // State to hold the note value
-        cost: '', // State to hold the cost value
-        vehicleNumber: '', // State to hold the vehicle number value
+        note: '',
+        cost: '',
+        vehicleNumber: '',
     });
 
     const option = {
@@ -50,24 +53,24 @@ const GarageUser = () => {
     }
 
     const handleNoteChange = (text) => {
-        setState({ ...state, note: text }); // Update the note value in state
+        setState({ ...state, note: text });
     }
 
     const handleCostChange = (text) => {
-        setState({ ...state, cost: text }); // Update the cost value in state
+        setState({ ...state, cost: text });
     }
 
     const handleVehicleNumberChange = (text) => {
-        setState({ ...state, vehicleNumber: text }); // Update the vehicle number value in state
+        setState({ ...state, vehicleNumber: text });
     }
 
-
-  
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!state.note.trim() || !state.cost.trim() || !state.photo || !state.vehicleNumber.trim()) {
             toast('Please fill in all fields and select an image');
             return;
         }
+
+        setIsLoading(true);
 
         const dataObject = {
             plateNo: state.vehicleNumber, 
@@ -85,29 +88,30 @@ const GarageUser = () => {
             name: 'maintenance_image.jpg',
         });
 
-        axios.post(`${baseUrl}/api/v1/tag/grageUserTag`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-        .then(response => {
-            console.log(response.data.status);
-            if (response.data.success == "success") {
-                toast('Maintenance details submitted successfully');
-                setState({
-                    photo: '',
-                    note: '',
-                    cost: '',
-                    vehicleNumber: '',
-                });
-            } else if(response.data.success == "failed") {
-                throw new Error(response.data.comment );
+        try {
+            const response = await axios.post(`${baseUrl}/api/v1/tag/grageUserTag`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            setModalMessage("sucessfully added");
+
+            setModalVisibleOtpSucess(true); // Set modalVisibleOtpSucess to true
+        } catch (error) {
+            console.log(error)
+            if (error.response) {
+                setModalMessage(error.response.data.comment);
+                setModalVisible(true);
+            } else if (error.request) {
+                setModalMessage('Network error. Please check your internet connection.');
+                setModalVisible(true);
+            } else {
+                setModalMessage('An error occurred. Please try again later.');
+                setModalVisible(true);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Alert.alert('Error', error.message || 'Failed to submit maintenance details');
-        });
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -120,25 +124,25 @@ const GarageUser = () => {
                 style={styles.input}
                 placeholder="Enter vehicle number"
                 placeholderTextColor="black"
-                onChangeText={handleVehicleNumberChange} // Call handleVehicleNumberChange when the vehicle number text changes
-                value={state.vehicleNumber} // Set the value of the vehicle number input field
+                onChangeText={handleVehicleNumberChange}
+                value={state.vehicleNumber}
             />
             <Text style={styles.normalText}>Enter note about maintenance</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Enter note"
                 placeholderTextColor="black"
-                onChangeText={handleNoteChange} // Call handleNoteChange when the note text changes
-                value={state.note} // Set the value of the note input field
+                onChangeText={handleNoteChange}
+                value={state.note}
             />
             <Text style={styles.normalText}>Enter cost </Text>
             <TextInput
                 style={styles.input}
                 placeholder="Enter cost"
                 placeholderTextColor="black"
-                onChangeText={handleCostChange} // Call handleCostChange when the cost text changes
-                value={state.cost} // Set the value of the cost input field
-                keyboardType="numeric" // Set keyboardType to 'numeric'
+                onChangeText={handleCostChange}
+                value={state.cost}
+                keyboardType="numeric"
             />
             <View style={styles.imageContainer}>
                 {state.photo ? (
@@ -158,10 +162,52 @@ const GarageUser = () => {
             <TouchableOpacity style={styles.buttonSubmit} onPress={handleSubmit}>
                 <Text style={styles.buttonTextSubmit}>Submit</Text>
             </TouchableOpacity>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+                        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+                            <Text style={styles.buttonText}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisibleOtpSucess}
+                onRequestClose={() => {
+                    setModalVisibleOtpSucess(false);
+                }}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+                        <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
+                            <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            {isLoading && (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#FFA500" />
+                    <Text style={styles.loadingText}>Submitting...</Text>
+                </View>
+            )}
         </View>
     );
 };
-
 export default GarageUser;
 
 const styles = StyleSheet.create({
@@ -241,5 +287,107 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
-    },
+    },modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    marginBottom: 20,
+    fontSize: 18,
+    textAlign: 'center',
+    
+  },
+  customButton: {
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    marginBottom: 20,
+    fontSize: 18,
+    textAlign: 'center',
+    
+  },
+  customButton: {
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
+    width: '100%',
+    height: '100%',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500', // Orange color
+  },
 });

@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, StatusBar, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, Image, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import axios from 'axios'; // Import axios for making HTTP requests
 import baseUrl from '../baseUrl/baseUrl'; // Import the baseUrl function
 
 const ViewMaintainceDetails = () => {
   const [data, setData] = useState([]); // State to hold maintenance data
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalVisibleOtpSuccess, setModalVisibleOtpSuccess] = useState(false);
+  const [odometer, setOdometer] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
     const retrieveData = async () => {
+      setLoading(true); // Set loading to true when request starts
+
       try {
         const storedToken = await AsyncStorage.getItem('token');
         const storedEmail = await AsyncStorage.getItem('email');
@@ -23,35 +30,57 @@ const ViewMaintainceDetails = () => {
 
         setData(response.data.data); // Update state with response data
       } catch (error) {
-        console.error('Error retrieving data:', error);
-        Alert.alert('Error', 'Failed to retrieve data. Please try again later.');
+        if (error.response) {
+          setModalMessage(error.response.data.comment);
+          setModalVisible(true);
+        } else if (error.request) {
+          setModalMessage('Network error. Please check your internet connection.');
+          setModalVisible(true);
+        } else {
+          setModalMessage('An error occurred. Please try again later.');
+          setModalVisible(true);
+        }
+      } finally {
+        setLoading(false); // Set loading to false after request completes
       }
     };
 
     retrieveData();
   }, []); // Empty dependency array to run effect only once
+
   const handleDelete = async (id) => {
-    // Implement delete logic here
-    console.log('Deleting item with id:', id);
-    // You can update the data state after deleting
-  
+    setLoading(true); // Set loading to true when delete operation starts
+
     try {
+      const storedToken = await AsyncStorage.getItem('token');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+
       // Make a POST request to delete the maintenance item with the given id
       await axios.post(`${baseUrl}/api/v1/maintaince/deleteMaintaince`, {
         _id: id, // Use the passed id parameter
       });
-  
+
       // If deletion is successful, update the data state or do any necessary operations
       // For example, if data is an array of maintenance items, you can filter out the deleted item
       const updatedData = data.filter(item => item._id !== id);
       setData(updatedData);
+      setModalMessage('successfully delete');
+      setModalVisibleOtpSuccess(true);
     } catch (error) {
-      console.error('Error deleting item:', error);
-      Alert.alert('Error', 'Failed to delete item. Please try again later.');
+      if (error.response) {
+        setModalMessage(error.response.data.comment);
+        setModalVisible(true);
+      } else if (error.request) {
+        setModalMessage('Network error. Please check your internet connection.');
+        setModalVisible(true);
+      } else {
+        setModalMessage('An error occurred. Please try again later.');
+        setModalVisible(true);
+      }
+    } finally {
+      setLoading(false); // Set loading to false after delete operation completes
     }
   };
-  
-  
 
   // Function to format date
   const formatDate = (dateString) => {
@@ -63,22 +92,63 @@ const ViewMaintainceDetails = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
       <Text style={styles.title}>View Maintenance Details</Text>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.subContainer}>
-          {/* Render both time, photo, and delete button for each object */}
-          {data.map((item) => (
-            <View key={item._id} style={styles.itemContainer}>
-              <Text style={styles.text}>Date: {formatDate(item.updatedAt)}</Text>
-              <Text style={styles.text}>Note: {item.note}</Text>
-              <Text style={styles.text}>Cost: {item.cost}</Text>
-              <Image source={{ uri: item.imageUrl }} style={styles.photo} />
-              <TouchableOpacity onPress={() => handleDelete(item._id)} style={styles.deleteButton}>
-                <Text style={styles.deleteButtonText}>Delete this Record</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading...</Text>
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.subContainer}>
+            {/* Render both time, photo, and delete button for each object */}
+            {data.map((item) => (
+              <View key={item._id} style={styles.itemContainer}>
+                <Text style={styles.text}>Date: {formatDate(item.updatedAt)}</Text>
+                <Text style={styles.text}>Note: {item.note}</Text>
+                <Text style={styles.text}>Cost: {item.cost}</Text>
+                <Image source={{ uri: item.imageUrl }} style={styles.photo} />
+                <TouchableOpacity onPress={() => handleDelete(item._id)} style={styles.deleteButton}>
+                  <Text style={styles.deleteButtonText}>Delete this Record</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      )}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSuccess}
+        onRequestClose={() => {
+          setModalVisibleOtpSuccess(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisibleOtpSuccess(false)} style={styles.customButtonSuccess}>
+              <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -132,7 +202,58 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  }, modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
   },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: 250, // Adjust width as needed
+  },
+  customButton: {
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },modalText:{
+    fontSize:18
+  },loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },
+  
 });
 
 export default ViewMaintainceDetails;

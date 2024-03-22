@@ -12,9 +12,11 @@ const SignUpPage = () => {
   const [reEnterPassword, setReEnterPassword] = useState('');
   const [reEnterPasswordError, setReEnterPasswordError] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState(''); // State for vehicle number
-  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
-  const [modalMessage, setModalMessage] = useState(''); // State to hold modal message
-  
+
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
 
   const navigation = useNavigation(); // Get the navigation object
 
@@ -34,9 +36,16 @@ const SignUpPage = () => {
 
   
   const handleSubmit = async () => {
+    // Check if any field is empty
+    if (!email || !password || !reEnterPassword || !vehicleNumber) {
+      setModalMessage('Please fill in all fields');
+      setModalVisible(true);
+      return;
+    }
+  
     // Validate email
     validateEmail();
-    
+  
     // Check if passwords match
     if (password !== reEnterPassword) {
       setReEnterPasswordError('Passwords do not match');
@@ -54,15 +63,11 @@ const SignUpPage = () => {
         password: password,
         plateNo: vehicleNumber // Using vehicleNumber in the request
       });
-      
+  
       console.log('Response from backend:', response.data); // Access response data using response.data
-      
+  
       // Show success modal
-      
-
-      
-
-
+  
       // Reset form fields
       setEmail('');
       setPassword('');
@@ -70,13 +75,29 @@ const SignUpPage = () => {
       setVehicleNumber('');
       setEmailError('');
       setReEnterPasswordError('');
-      setTimeout(() => {
-        navigation.navigate('SignInPage');
-      }, 1500);
+      // setTimeout(() => {
+      //   navigation.navigate('SignInPage');
+      // }, 1500);
+      setModalMessage('Successfully login');
+      setModalVisibleOtpSucess(true);
     } catch (error) {
       if (error.response) {
-        // If registration fails, set modalMessage and modalVisible to true to display the modal
+        // If login fails, set modalMessage and modalVisible to true to display the modal
+        console.log(error.response.data.comment);
         setModalMessage(error.response.data.comment);
+        setModalVisible(true);
+      } else if (error.request) {
+        // Network error occurred
+        console.error('Network error:', error.request);
+        // Set error message or take necessary action for network error
+        // For example, display a message to the user indicating network issue
+        setModalMessage('Network error. Please check your internet connection.');
+        setModalVisible(true);
+      } else {
+        // Something else went wrong
+        console.error('Error:', error.message);
+        // Set error message or take necessary action for other types of errors
+        setModalMessage('An error occurred. Please try again later.');
         setModalVisible(true);
       }
     }
@@ -176,21 +197,42 @@ const SignUpPage = () => {
 
       {/* Modal to display when registration fails */}
       <Modal
-  animationType="slide"
-  transparent={true}
-  visible={modalVisible}
-  onRequestClose={() => {
-    setModalVisible(false);
-  }}
->
-  <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
-        <Text style={styles.buttonText}>{modalMessage}</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSucess} // Changed this line
+        onRequestClose={() => {
+          setModalVisibleOtpSucess(false); // Changed this line
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => { setModalVisibleOtpSucess(false); navigation.navigate('SignInPage'); }} style={styles.customButtonSucess}>
+  <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
+</TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
 
     </SafeAreaView>
   );
@@ -313,6 +355,59 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     textAlign: 'center',
+  }, modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '80%', // Set the width to 80% of the screen width
+    maxWidth: 400, // Maximum width of the modal content
+  },
+  customButton: {
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:100,
+    marginTop:10,
+  },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:100,
+    marginTop:10,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },modalText:{
+    fontSize:18
+  },loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
   },
 });
 

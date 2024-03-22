@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, TextInput ,StatusBar} from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, StatusBar, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
+import baseUrl from '../baseUrl/baseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+
 
 const AddExpensesPage = () => {
   const [date, setDate] = useState(new Date());
@@ -9,22 +14,81 @@ const AddExpensesPage = () => {
   const [selectedExpenseType, setSelectedExpenseType] = useState('fuel');
   const [note, setNote] = useState('');
   const [totalCost, setTotalCost] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
+  const [odometer, setOdometer] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
+
+    // Format the date to dd-mm-yyyy
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = currentDate.getFullYear();
+    const formattedDate = `${day}-${month}-${year}`;
+
+    console.log(formattedDate);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!note.trim() || !totalCost.trim()) {
       alert('Note or Total Cost are required!');
       return; // Prevent submission
     }
 
-    console.log('Form submitted');
+    setLoading(true); // Set loading to true when submission starts
+
+    try {
+      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedToken = await AsyncStorage.getItem('token');
+
+
+      const formattedDate =
+        date.getDate().toString().padStart(2, '0') + '-' +
+        (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+        date.getFullYear().toString();
+
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+  
+
+      const response = await axios.post(`${baseUrl}/api/v1/expenses`, {
+        plateNo: storedPlateNo,
+        date: formattedDate,
+        odometer: odometer,
+        totalCost: parseFloat(totalCost),
+        selectedExpenseType: selectedExpenseType,
+        note: note
+      });
+
+      console.log(response.data.comment)
+      setModalMessage('successfully added');
+      setModalVisibleOtpSucess(true);
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      if (error.response) {
+        console.log(error.response.data.comment);
+        setModalMessage(error.response.data.comment);
+        setModalVisible(true);
+      } else if (error.request) {
+        console.error('Network error:', error.request);
+        setModalMessage('Network error. Please check your internet connection.');
+        setModalVisible(true);
+      } else {
+        console.error('Error:', error.message);
+        setModalMessage('An error occurred. Please try again later.');
+        setModalVisible(true);
+      }
+    } finally {
+      setLoading(false); // Set loading to false after submission completes
+    }
   };
 
+  
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
@@ -46,11 +110,14 @@ const AddExpensesPage = () => {
 
         <Text style={[styles.textValue, styles.marginBottom]}>Odometer</Text>
         <TextInput
-          style={[styles.input, styles.marginBottom]}
-          placeholder="Enter mileage (KM)"
-          keyboardType="numeric"
-          placeholderTextColor="black"
-        />
+  style={[styles.input, styles.marginBottom]}
+  placeholder="Enter mileage (KM)"
+  keyboardType="numeric"
+  placeholderTextColor="black"
+  value={odometer}  // Set the value prop to display the current value of odometer
+  onChangeText={setOdometer}  // Assign setOdometer function to onChangeText to update the odometer state
+/>
+
         <Text style={[styles.textValue, styles.marginBottom]}>Note</Text>
         <TextInput
           style={[styles.input, styles.marginBottom]}
@@ -129,6 +196,42 @@ const AddExpensesPage = () => {
           <Button title="Submit" onPress={handleSubmit} color="#FFA500" />
         </View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSucess} // Changed this line
+        onRequestClose={() => {
+          setModalVisibleOtpSucess(false); // Changed this line
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
+            <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -194,6 +297,50 @@ const styles = StyleSheet.create({
     alignSelf: 'center', // Center the container horizontally
   },insuranceButton: {
     marginLeft: 12, // Adjust the margin 
+  }, modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    marginBottom: 20,
+    fontSize: 18,
+    textAlign: 'center',
+    
+  },
+  customButton: {
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
   },
   
 });

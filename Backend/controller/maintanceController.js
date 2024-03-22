@@ -18,7 +18,7 @@ exports.addMaintanceDetails = (req, res, next) => {
             if (err) {
                 return res.status(400).json({
                     status: "error",
-                    error: err.message
+                    comment: err.message
                 });
             }
 
@@ -26,7 +26,7 @@ exports.addMaintanceDetails = (req, res, next) => {
             if (!req.file || !req.file.mimetype.startsWith('image')) {
                 return res.status(400).json({
                     status: "error",
-                    error: "Uploaded file is not an image"
+                    comment: "Uploaded file is not an image"
                 });
             }
 
@@ -42,7 +42,7 @@ exports.addMaintanceDetails = (req, res, next) => {
                 if (!user) {
                     return res.status(404).json({
                         status: "error",
-                        error: "User not found with the provided plate number"
+                        comment: "User not found with the provided plate number"
                     });
                 }
 
@@ -51,7 +51,7 @@ exports.addMaintanceDetails = (req, res, next) => {
                     if (error) {
                         return res.status(500).json({
                             status: "error",
-                            error: error.message
+                            comment: error.message
                         });
                     }
 
@@ -80,21 +80,21 @@ exports.addMaintanceDetails = (req, res, next) => {
                     } catch (error) {
                         return res.status(500).json({
                             status: "error",
-                            error: error.message
+                            comment: error.message
                         });
                     }
                 });
             } catch (error) {
                 return res.status(500).json({
                     status: "error",
-                    error: error.message
+                    comment: error.message
                 });
             }
         });
     } catch (error) {
         return res.status(500).json({
             status: "error",
-            error: error.message
+            comment: error.message
         });
     }
 };

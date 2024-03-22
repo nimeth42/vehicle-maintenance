@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar, Alert,Modal } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios'; // Import axios for making HTTP requests
 import baseUrl from '../baseUrl/baseUrl';
@@ -7,6 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const AddMaintainceDetails = () => {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
+    const [odometer, setOdometer] = useState('');
+    const [loading, setLoading] = useState(false); // Add loading state
+
     const [state, setState] = useState({
         photo: '',
         note: '',
@@ -59,20 +65,18 @@ const AddMaintainceDetails = () => {
     }
 
     const handleSubmit = async () => {
-        // Log the submitted values
-        console.log('Note:', state.note);
-        console.log('Cost:', state.cost);
-        
+        setLoading(true); // Set loading to true when submitting
+
         try {
             // Retrieve token, email, and plateNo from AsyncStorage
             const token = await AsyncStorage.getItem('token');
             const email = await AsyncStorage.getItem('email');
             const plateNo = await AsyncStorage.getItem('plateNo');
-            console.log("** "+plateNo)
     
             // Check if note, cost, photo, or plateNo is empty or undefined
             if (!state.note || !state.cost || !state.photo || !plateNo) {
                 toast('Please fill in all fields and select an image');
+                setLoading(false); // Set loading to false after displaying the toast
                 return; // Return early if any field is empty or undefined
             }
     
@@ -101,23 +105,24 @@ const AddMaintainceDetails = () => {
             });
     
             console.log(response.data.status);
-            if (response.data.success === "success") {
-                toast('Maintenance details submitted successfully');
-                setState({
-                    photo: '',
-                    note: '',
-                    cost: '',
-                    plateNo: '',
-                });
-            } else if(response.data.success === "failed") {
-                throw new Error(response.data.comment);
-            }
+            setModalMessage('successfully added');
+            setModalVisibleOtpSucess(true);
+            
         } catch (error) {
-            console.error('Error:', error);
-            Alert.alert('Error', error.message || 'Failed to submit maintenance details');
+            if (error.response) {
+                setModalMessage(error.response.data.comment);
+                setModalVisible(true);
+            } else if (error.request) {
+                setModalMessage('Network error. Please check your internet connection.');
+                setModalVisible(true);
+            } else {
+                setModalMessage('An error occurred. Please try again later.');
+                setModalVisible(true);
+            }
+        } finally {
+            setLoading(false); // Set loading to false after submission is completed or failed
         }
     }
-    
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor="black" barStyle="light-content" />
@@ -159,6 +164,42 @@ const AddMaintainceDetails = () => {
             <TouchableOpacity style={styles.buttonSubmit} onPress={handleSubmit}>
                 <Text style={styles.buttonTextSubmit}>Submit</Text>
             </TouchableOpacity>
+
+            <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSucess}
+        onRequestClose={() => {
+          setModalVisibleOtpSucess(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
+              <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
         </View>
     );
 };
@@ -240,5 +281,49 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
-    }
+    }, modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    marginBottom: 20,
+    fontSize: 18,
+    textAlign: 'center',
+    
+  },
+  customButton: {
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },
 });

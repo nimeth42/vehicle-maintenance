@@ -13,9 +13,9 @@ const SignInPage = ({ navigation }) => {
   const [isInputFilled, setIsInputFilled] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
-  const [modalMessage, setModalMessage] = useState(''); // State to hold modal message
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
 
   const handleForgotPassword = () => {
     navigation.navigate('OtpPage');
@@ -78,15 +78,22 @@ const SignInPage = ({ navigation }) => {
   //     // Handle network errors or other unexpected errors
   //   }
   // };
-  
-  
   const handleHomePage = async () => {
+    console.log('Response');
+    
     // Validate email
     validateEmail();
-  
+    
     // Check if there are any email errors
     if (emailError) {
       return; // Stop submission if there are email errors
+    }
+    
+    // Check if any of the required fields are empty
+    if (!email || !password || !vehicleNumber) {
+      setModalMessage('Please fill in all the fields.');
+      setModalVisible(true);
+      return; // Stop submission if any field is empty
     }
   
     try {
@@ -100,16 +107,16 @@ const SignInPage = ({ navigation }) => {
   
       // Store token in AsyncStorage
       await AsyncStorage.setItem('token', response.data.token); // Assuming token is returned from backend
-  
-    
-      await  AsyncStorage.setItem('email', response.data.data.email);
+      await AsyncStorage.setItem('email', response.data.data.email);
       await AsyncStorage.setItem('plateNo', response.data.data.plateNo);
+  
       // Print the token that has been set
       const storedToken = await AsyncStorage.getItem('token');
       console.log('Stored Token:', storedToken);
   
       // Navigate to Home Page
-      navigation.navigate('HomePage');
+      setModalMessage("Successfully login");
+      setModalVisibleOtpSucess(true);
     } catch (error) {
       if (error.response) {
         // If login fails, set modalMessage and modalVisible to true to display the modal
@@ -132,6 +139,7 @@ const SignInPage = ({ navigation }) => {
       }
     }
   };
+  
 
   
   
@@ -237,23 +245,43 @@ const SignInPage = ({ navigation }) => {
         </View>
       </View>
 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
 
       <Modal
-  animationType="slide"
-  transparent={true}
-  visible={modalVisible}
-  onRequestClose={() => {
-    setModalVisible(false);
-  }}
->
-  <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
-        <Text style={styles.buttonText}>{modalMessage}</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSucess} // Changed this line
+        onRequestClose={() => {
+          setModalVisibleOtpSucess(false); // Changed this line
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => { setModalVisibleOtpSucess(false); navigation.navigate('HomePage'); }} style={styles.customButtonSucess}>
+  <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
+</TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
 
     </SafeAreaView>
   );
@@ -367,29 +395,64 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 22
-  },
-  modalContainer: {
+  }, modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
   },
- 
-  modalText: {
-    marginBottom: 20,
-    fontSize: 18,
-    textAlign: 'center',
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '80%', // Set the width to 80% of the screen width
+    maxWidth: 400, // Maximum width of the modal content
+
   },
   customButton: {
-    backgroundColor: 'red', // Set the background color of the button to red
+    backgroundColor: 'red',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
+    width:150,
   },
-  buttonText: {
-    color: 'white',
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },modalText:{
+    fontSize:18
+  },loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },modalText: {
+    marginBottom: 10,
     fontSize: 18,
     textAlign: 'center',
+    color: 'black',
+    padding: 3, // Add padding here
   },
 });
 

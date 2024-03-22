@@ -1,427 +1,21 @@
-// import React, { useState, useEffect } from 'react'; //useEffect was added -SF
-// import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-// import { PieChart } from 'react-native-svg-charts';
-// import DateTimePicker from '@react-native-community/datetimepicker';
 
-// const PieChartPage = () => {
-//   const [showDatePicker, setShowDatePicker] = useState(false);
-//   const [selectedDate, setSelectedDate] = useState(new Date());
-
-//   const [expenseData,setExpensesData]=useState([]); // added -SF
-
-//   useEffect(()=>{
-//     fetchExpenses(selectedDate, new Date());// new Date added
-//   },[selectedDate]);
-
-//   const handleBackPress = () => {
-//     navigation.goBack();
-//   };
-
-//   const fetchExpenses = async (startDate,endDate) => {   // fetching expenses from the database -SF
-//     try {
-//       const response = await fetch(`http://localhost:3000/api/v1/expenses?date=${date.toISOString()}`);
-
-//       const data = await response.json();
-//       setExpensesData(data);
-//     } catch (error) {
-//       console.error('Error fetching expenses:', error);
-//     }
-//   };
-
-//   // Define the data for the PieChart-SF
-//   const data = expenseData.map((expense) => ({
-//     key: expense.type,
-//     value: expense.amount,
-//     svg: {
-//       fill: getExpenseColor(expense.type),
-//     },
-//   }));
-
-
-//     // Function to get color based on expense type-SF
-//     const getExpenseColor = (type) => {
-//       switch (type) {
-//         case 'fuel':
-//           return 'blue';
-//         case 'insurance':
-//           return 'green';
-//         case 'repair':
-//           return 'orange';
-//         case 'miscellaneous':
-//           return 'red';
-//         default:
-//           return 'gray'; // Default color for unknown types
-//       }
-//     };
-
-
-//   //The below was commented due to it being sample data-SF
-
-//   // const data = [
-//   //   {
-//   //     key: 'fuel',
-//   //     value: 45,
-//   //     svg: { fill: 'blue' },
-//   //   },
-//   //   {
-//   //     key: 'insurance',
-//   //     value: 90,
-//   //     svg: { fill: 'green' },
-//   //   },
-//   //   {
-//   //     key: 'repair',
-//   //     value: 55,
-//   //     svg: { fill: 'orange' },
-//   //   },
-//   //   {
-//   //     key: 'miscellaneous',
-//   //     value: 190,
-//   //     svg: { fill: 'red' },
-//   //   },
-    
-//   // ];
-
-//   const handleDateChange = (event, selectedDate) => {
-//     setShowDatePicker(false);
-//     if (selectedDate) {
-//       setSelectedDate(selectedDate);
-//       console.log('Selected date:', selectedDate); // Log selected date to console
-//     }
-//   };
-
-//   const showDateTimePicker = () => {
-//     setShowDatePicker(true);
-//   };
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// leave this commented
-
-
-  // return (
-  //   <View style={styles.container}>
-  //     <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-  //       <Text style={styles.backButtonText}>Back</Text>
-  //     </TouchableOpacity>
-  //     <PieChart style={{ height: 200, width: 200 }} data={data} />
-  //     <View style={styles.legendContainer}>
-  //       {data.map((item, index) => (
-  //         <View key={item.key} style={styles.legendItem}>
-  //           <View style={[styles.legendColor, { backgroundColor: item.svg.fill }]} />
-  //           <Text style={styles.legendText}>{`  ${item.key}: ${item.value}%`}</Text>
-  //         </View>
-  //       ))}
-  //     </View>
-  //     {showDatePicker && (
-  //       <DateTimePicker
-  //         testID="dateTimePicker"
-  //         value={selectedDate}
-  //         mode="date"
-  //         is24Hour={true}
-  //         display="default"
-  //         onChange={handleDateChange}
-  //       />
-  //     )}
-  //     <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
-  //       <Text style={styles.datePickerButtonText}>Select Date</Text>
-  //     </TouchableOpacity>
-  //   </View>
-  // );
-
-
-
-  // /////////////////////////////////////////////////////////////////////////////////////////////////
-//   return ( // adjusted this accordingly-SF
-//     <View style={styles.container}>
-//       <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-//         <Text style={styles.backButtonText}>Back</Text>
-//       </TouchableOpacity>
-//       <PieChart style={{ height: 200, width: 200 }} data={data} />
-//       <View style={styles.legendContainer}>
-//         {expenseData.map((expense, index) => (
-//           <View key={index} style={styles.legendItem}>
-//             <View style={[styles.legendColor, { backgroundColor: getExpenseColor(expense.type) }]} />
-//             <Text style={styles.legendText}>{`${expense.type}: ${expense.amount}`}</Text>
-//           </View>
-//         ))}
-//       </View>
-//       {showDatePicker && (
-//         <DateTimePicker
-//           testID="dateTimePicker"
-//           value={selectedDate}
-//           mode="date"
-//           is24Hour={true}
-//           display="default"
-//           onChange={handleDateChange}
-//         />
-//       )}
-//       <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
-//         <Text style={styles.datePickerButtonText}>Select Date</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: 'black',
-//   },
-//   title: {
-//     position: 'absolute',
-//     top: 180,
-//     textAlign: 'center',
-//     fontSize: 40,
-//     fontWeight: 'bold',
-//     color: '#FFA500',
-//   },
-//   legendContainer: {
-//     flexDirection: 'column',
-//     flexWrap: 'wrap',
-//     marginTop: 20,
-//   },
-//   backButton: {
-//     position: 'absolute',
-//     top: 20,
-//     backgroundColor: '#FFA500',
-//     width: 70,
-//     height: 35,
-//     borderRadius: 7,
-//     justifyContent: 'center', // Center content vertically
-//     alignItems: 'center', // Center content horizontally
-//     left: -80, // Adjusted to align with the left edge
-//   },
-//   backButtonText: {
-//     fontSize: 18,
-//     color: 'white',
-//   },
-//   legendItem: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginRight: 20,
-//     marginBottom: 10,
-//   },
-//   legendColor: {
-//     width: 20,
-//     height: 20,
-//     marginRight: 5,
-//     borderRadius: 3,
-//   },
-//   legendText: {
-//     fontSize: 16,
-//     color: 'white',
-//   },
-//   datePickerButton: {
-//     backgroundColor: '#FFA500',
-//     paddingVertical: 12,
-//     borderRadius:8,
-//     margin: 15,
-//     width: 200,
-//   },
-//   datePickerButtonText: {
-//     color: 'white',
-//     textAlign: 'center',
-//     fontSize: 20,
-//   },
-// });
-
-// export default PieChartPage;
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// import React, { useState, useEffect } from 'react';
-// import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-// import { PieChart } from 'react-native-svg-charts';
-// import DateTimePicker from '@react-native-community/datetimepicker';
-
-// const PieChartPage = () => {
-//   const [showDatePicker, setShowDatePicker] = useState(false);
-//   const [selectedDate, setSelectedDate] = useState(new Date());
-//   const [expenseData, setExpensesData] = useState([]);
-
-//   useEffect(() => {
-//     fetchExpenses(selectedDate, new Date());
-//   }, [selectedDate]);
-
-//   const handleBackPress = () => {
-//     navigation.goBack();
-//   };
-
-//   const fetchExpenses = async (startDate, endDate) => {
-//     try {
-//       const response = await fetch(
-//         `http://localhost:3000/api/v1/expenses?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
-//       );
-
-//       const data = await response.json();
-//       setExpensesData(data);
-//     } catch (error) {
-//       console.error('Error fetching expenses:', error);
-//     }
-//   };
-
-//   const getExpenseColor = (type) => {
-//     switch (type) {
-//       case 'fuel':
-//         return 'blue';
-//       case 'insurance':
-//         return 'green';
-//       case 'repair':
-//         return 'orange';
-//       case 'miscellaneous':
-//         return 'red';
-//       default:
-//         return 'gray';
-//     }
-//   };
-
-//   const handleDateChange = (event, selectedDate) => {
-//     setShowDatePicker(false);
-//     if (selectedDate) {
-//       setSelectedDate(selectedDate);
-//     }
-//   };
-
-//   const showDateTimePicker = () => {
-//     setShowDatePicker(true);
-//   };
-
-//   const data = expenseData.map((expense) => ({
-//     key: expense.type,
-//     value: expense.amount,
-//     svg: {
-//       fill: getExpenseColor(expense.type),
-//     },
-//   }));
-
-//   return (
-//     <View style={styles.container}>
-//       <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-//         <Text style={styles.backButtonText}>Back</Text>
-//       </TouchableOpacity>
-//       <PieChart style={{ height: 200, width: 200 }} data={data} />
-//       <View style={styles.legendContainer}>
-//         {expenseData.map((expense, index) => (
-//           <View key={index} style={styles.legendItem}>
-//             <View style={[styles.legendColor, { backgroundColor: getExpenseColor(expense.type) }]} />
-//             <Text style={styles.legendText}>{`${expense.type}: ${expense.amount}`}</Text>
-//           </View>
-//         ))}
-//       </View>
-//       {showDatePicker && (
-//         <DateTimePicker
-//           testID="dateTimePicker"
-//           value={selectedDate}
-//           mode="date"
-//           is24Hour={true}
-//           display="default"
-//           onChange={handleDateChange}
-//         />
-//       )}
-//       <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
-//         <Text style={styles.datePickerButtonText}>Select Date</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: 'black',
-//   },
-//   backButton: {
-//     position: 'absolute',
-//     top: 20,
-//     backgroundColor: '#FFA500',
-//     width: 70,
-//     height: 35,
-//     borderRadius: 7,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     left: -80,
-//   },
-//   backButtonText: {
-//     fontSize: 18,
-//     color: 'white',
-//   },
-//   legendContainer: {
-//     flexDirection: 'column',
-//     flexWrap: 'wrap',
-//     marginTop: 20,
-//   },
-//   legendItem: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginRight: 20,
-//     marginBottom: 10,
-//   },
-//   legendColor: {
-//     width: 20,
-//     height: 20,
-//     marginRight: 5,
-//     borderRadius: 3,
-//   },
-//   legendText: {
-//     fontSize: 16,
-//     color: 'white',
-//   },
-//   datePickerButton: {
-//     backgroundColor: '#FFA500',
-//     paddingVertical: 12,
-//     borderRadius: 8,
-//     margin: 15,
-//     width: 200,
-//   },
-//   datePickerButtonText: {
-//     color: 'white',
-//     textAlign: 'center',
-//     fontSize: 20,
-//   },
-// });
-
-// export default PieChartPage;
-
-
-
-
-////////////////////////////////////////final
-
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, Platform, Modal } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import baseUrl from '../baseUrl/baseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const PieChartPage = () => {
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [expenseData, setExpensesData] = useState([]);
-
-  useEffect(() => {
-    fetchExpenses(selectedDate, new Date());
-  }, [selectedDate]);
-
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
-
-  const fetchExpenses = async (startDate, endDate) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/v1/expenses?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
-      );
-
-      const data = await response.json();
-      setExpensesData(data);
-    } catch (error) {
-      console.error('Error fetching expenses:', error);
-    }
-  };
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [data, setData] = useState(null); // Initialize data as null
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
+  const [odometer, setOdometer] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const getExpenseColor = (type) => {
     switch (type) {
@@ -437,40 +31,68 @@ const PieChartPage = () => {
         return 'gray';
     }
   };
-
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
+  let chartData = null;
+  if (data) {
+    chartData = Object.keys(data.percentage).map((key, index) => ({
+      key: index.toString(),
+      value: data.percentage[key], // Use percentage value for each expense type
+      svg: {
+        fill: getExpenseColor(key),
+      },
+      arc: { outerRadius: '100%', padAngle: 0.03 },
+    }));
+  }
+  const handleDateChange = async (event, selectedDate) => {
+    setShowDatePicker(Platform.OS === 'ios');
     if (selectedDate) {
       setSelectedDate(selectedDate);
+      const day = String(selectedDate.getDate()).padStart(2, '0');
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const year = selectedDate.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+
+      try {
+        setLoading(true);
+        const storedPlateNo = await AsyncStorage.getItem('plateNo');
+        const storedToken = await AsyncStorage.getItem('token');
+
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+
+        const response = await axios.post(`${baseUrl}/api/v1/pieChart`, {
+          plateNo: storedPlateNo,
+          startDate: formattedDate
+        });
+
+        setData(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        if (error.response) {
+          setModalMessage(error.response.data.comment);
+          setModalVisible(true);
+        } else if (error.request) {
+          setModalMessage('Network error. Please check your internet connection.');
+          setModalVisible(true);
+        } else {
+          setModalMessage('An error occurred. Please try again later.');
+          setModalVisible(true);
+        }
+      }
     }
   };
+
 
   const showDateTimePicker = () => {
     setShowDatePicker(true);
   };
 
-  const data = expenseData.map((expense) => ({
-    key: expense.type,
-    value: expense.amount,
-    svg: {
-      fill: getExpenseColor(expense.type),
-    },
-  }));
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-        <Text style={styles.backButtonText}>Back</Text>
+      <Text style={styles.topicText}>Pie Chart</Text>
+
+      <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
+        <Text style={styles.datePickerButtonText}>Select Date</Text>
       </TouchableOpacity>
-      <PieChart style={{ height: 200, width: 200 }} data={data} />
-      <View style={styles.legendContainer}>
-        {expenseData.map((expense, index) => (
-          <View key={index} style={styles.legendItem}>
-            <View style={[styles.legendColor, { backgroundColor: getExpenseColor(expense.type) }]} />
-            <Text style={styles.legendText}>{`${expense.type}: ${expense.amount}`}</Text>
-          </View>
-        ))}
-      </View>
       {showDatePicker && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -481,18 +103,55 @@ const PieChartPage = () => {
           onChange={handleDateChange}
         />
       )}
-      <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
-        <Text style={styles.datePickerButtonText}>Select Date</Text>
-      </TouchableOpacity>
-      <View style={styles.totalContainer}>
-        <Text style={styles.totalTitle}>Total Expenses</Text>
-        {expenseData.map((expense, index) => (
-          <View key={index}>
-            <Text style={styles.totalItem}>{expense.type}</Text>
-            <Text style={styles.totalItem}>{expense.amount}</Text>
+      {data && (
+        <>
+          <PieChart style={{ height: 300, width: 300 }} data={chartData} />
+          <View style={styles.legendContainer}>
+            <Text style={styles.legendText}>Total cost(date range): Rs {data.totalCost}</Text>
+            {Object.keys(data.percentage).map((type, index) => (
+              <View key={index} style={styles.legendItem}>
+                <View style={[styles.legendColor, { backgroundColor: getExpenseColor(type) }]} />
+                <Text style={styles.legendText}>{`${type}: ${data.percentage[type]}%   Cost: Rs ${data[type]} `}</Text>
+              </View>
+            ))}
           </View>
-        ))}
-      </View>
+        </>
+      )}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSucess}
+        onRequestClose={() => {
+          setModalVisibleOtpSucess(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
+              <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -504,20 +163,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
   },
-  backButton: {
-    position: 'absolute',
-    top: 20,
+  datePickerButton: {
     backgroundColor: '#FFA500',
-    width: 70,
-    height: 35,
-    borderRadius: 7,
-    justifyContent: 'center',
-    alignItems: 'center',
-    left: -80,
+    paddingVertical: 12,
+    borderRadius: 8,
+    margin: 15,
+    width: 200,
   },
-  backButtonText: {
-    fontSize: 18,
+  datePickerButtonText: {
     color: 'white',
+    textAlign: 'center',
+    fontSize: 20,
   },
   legendContainer: {
     flexDirection: 'column',
@@ -539,33 +195,49 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 16,
     color: 'white',
+  }, modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  datePickerButton: {
-    backgroundColor: '#FFA500',
-    paddingVertical: 12,
-    borderRadius: 8,
-    margin: 15,
-    width: 200,
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
   },
-  datePickerButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  totalContainer: {
-    marginTop: 20,
-  },
-  totalTitle: {
+  modalText: {
+    marginBottom: 20,
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 10,
+    textAlign: 'center',
+    
   },
-  totalItem: {
-    fontSize: 16,
-    color: 'white',
-    marginBottom: 5,
+  customButton: {
+    backgroundColor: 'red',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
   },
+  customButtonSucess:{
+    backgroundColor: 'blue',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:150,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },topicText:{
+    fontSize:35,
+    color:'#FFA500'
+  }
 });
 
 export default PieChartPage;

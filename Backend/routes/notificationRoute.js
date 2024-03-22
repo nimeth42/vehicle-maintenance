@@ -11,6 +11,7 @@ route.post("/viewOne", notificationController.viewOne);
 route.post("/deleteOne", notificationController.deleteOne);
 route.post("/viewAll", notificationController.viewAll);
 route.post("/accept", notificationController.acceptNotification);
+route.post("/notificationIdentifiy",notificationController.notificationIdentify);
 
 
 module.exports = route;
