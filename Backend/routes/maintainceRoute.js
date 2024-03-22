@@ -4,8 +4,8 @@ const auth = require("../middleware/auth");
 
 //controller
 const maintainceController = require("../controller/maintanceController");
-route.post("/addMiantainceDetails", maintainceController.addMaintanceDetails);
-route.post("/viewMaintaince", maintainceController.viewMaintanceDetails);
+route.post("/addMiantainceDetails",auth, maintainceController.addMaintanceDetails);
+route.post("/viewMaintaince", auth,maintainceController.viewMaintanceDetails);
 route.post("/deleteMaintaince",auth, maintainceController.deleteMaintanceDetials);
 
 

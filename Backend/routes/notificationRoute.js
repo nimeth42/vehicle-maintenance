@@ -7,10 +7,10 @@ const notificationController = require("../controller/notificationController");
 // route.post("/displayAll", auth,notificationController.displayAllNotifications);
 route.post("/displayAll",notificationController.displayAllNotifications);
 
-route.post("/viewOne", notificationController.viewOne);
-route.post("/deleteOne", notificationController.deleteOne);
-route.post("/viewAll", notificationController.viewAll);
-route.post("/accept", notificationController.acceptNotification);
+route.post("/viewOne",auth, notificationController.viewOne);
+route.post("/deleteOne", auth,notificationController.deleteOne);
+route.post("/viewAll", auth,notificationController.viewAll);
+route.post("/accept", auth,notificationController.acceptNotification);
 route.post("/notificationIdentifiy",notificationController.notificationIdentify);
 
 

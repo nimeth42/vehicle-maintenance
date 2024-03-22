@@ -41,6 +41,7 @@ function HomePage() {
         const email = await AsyncStorage.getItem('email');
         const plateNo = await AsyncStorage.getItem('plateNo');
 
+        
         const response = await axios.post(`${baseUrl}/api/v1/notification/notificationIdentifiy`, {
           plateNo: plateNo// Using vehicleNumber in the request
         });
@@ -83,6 +84,10 @@ function HomePage() {
   const handleViewExpences = () => {
     navigation.navigate('PieChartPage');
   };
+  const handleDashboard =()=>{
+    navigation.navigate('ViewScanner');
+
+  }
 
   const handleNotification = () => {
     // Implement notification functionality here
@@ -126,7 +131,7 @@ function HomePage() {
       
 
       <View style={styles.additionalButtonContainer}>
-        <CustomButton title="Get Dashboard Indicator Info" onPress={() => console.log("Get Dashboard Indicator pressed")} />
+        <CustomButton title="Get Dashboard Indicator Info" onPress={handleDashboard} />
       </View>
 
       <View style={styles.bottomButtonContainer}>

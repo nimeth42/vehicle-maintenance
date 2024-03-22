@@ -19,7 +19,6 @@ import NewPasswordPage from './screens/NewPasswordPage';
 import ViewMaintainceDetails from './screens/ViewMaintaince';
 import ViewNotification from './screens/ViewNotification';
 import ViewScanner from './screens/ViewScanner';
-//import GrageUserRegister from './screens/GrageUserRegiter';
 //import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
 
 const App = () => {
@@ -45,7 +44,7 @@ const App = () => {
     
       { <AppNavigations/> }
 
-    
+    {/* <GrageUserRegister/> */}
         
 
       {/* <GarageUser/> */}

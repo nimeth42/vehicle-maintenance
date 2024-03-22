@@ -107,9 +107,10 @@ const SignUpPage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
-      <Text style={styles.title}>DRIVE LANKA</Text>
 
       <View style={styles.innerContainer}>
+      <Text style={styles.title}>Sign UP</Text>
+
         <View>
           <Text style={styles.subtitle}>Create your account</Text>
 
