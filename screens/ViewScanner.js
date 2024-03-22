@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, StatusBar, TextInput } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import baseUrl from '../baseUrl/baseUrl';
 import axios from 'axios';
@@ -76,12 +76,12 @@ const GarageUser = () => {
         <View style={styles.container}>
             <StatusBar backgroundColor="black" barStyle="light-content" />
             <Text style={styles.heading}> Get Dashboard Info</Text>
-            <Text style={styles.textTopic}>Add Photo here...</Text>
             {state.photo ? (
-                <View style={styles.imageContainer}>
-                    <Image source={{ uri: state.photo }} style={styles.image} />
-                </View>
-            ) : null}
+                <Image source={{ uri: state.photo }} style={styles.image} />
+            ) : (
+                <Text style={styles.textTopic}>Add photo here</Text>
+            )}
+           
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={openCamera}>
                     <Text style={styles.buttonText}>Open Camera</Text>
@@ -98,6 +98,13 @@ const GarageUser = () => {
                     <Text style={styles.description}>{state.description}</Text>
                 </View>
             ) : null}
+            <TextInput
+                style={styles.descriptionInput}
+                value={state.description}
+                placeholder="Description about Indicator"
+                editable={false}
+                multiline={true}
+            />
         </View>
     );
 };
@@ -127,21 +134,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 20,
     },
-    imageContainer: {
-        width: 190,
-        height: 190,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
-        backgroundColor: '#FFA500',
-        borderRadius: 10,
-    },
-    image: {
-        width: 180,
-        height: 180,
-        resizeMode: 'cover',
-        borderRadius: 10,
-    },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -168,6 +160,12 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
     },
+    image: {
+        width: 200,
+        height: 200,
+        marginBottom: 20,
+        borderRadius: 10,
+    },
     descriptionBox: {
         backgroundColor: 'grey',
         padding: 60,
@@ -177,5 +175,14 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 16,
         color: 'white',
+    },
+    descriptionInput: {
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 10,
+        marginTop: 20,
+        width: 300,
+        height: 200,
+        textAlignVertical: 'top',
     },
 });
