@@ -16,6 +16,7 @@ import GarageUser from '../screens/GarageUser';
 import ViewMaintainceDetails from '../screens/ViewMaintaince';
 import ViewNotification from '../screens/ViewNotification';
 import ViewScanner from '../screens/ViewScanner';
+import GrageUserRegister from '../screens/GrageUserRegiter';
 
 
 const AppNavigations = () => {
@@ -38,8 +39,7 @@ const AppNavigations = () => {
         <Stack.Screen name="ViewMaintainceDetails" component={ViewMaintainceDetails} />
         <Stack.Screen name="ViewNotifications" component={ViewNotification} />
         <Stack.Screen name="ViewScanner" component={ViewScanner} />
-
-
+        
 
 
       </Stack.Navigator>

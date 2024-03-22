@@ -13,7 +13,7 @@ const LandingPage = ()=> {
     <ImageBackground source={require('../assets/assets/bg5.jpg')} style={styles.backgroundImage}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View style={styles.content}>
-        <Text style={styles.title}>DRIVE LANAKA</Text>
+        <Text style={styles.title}>DRIVELANKA</Text>
         <Text style={styles.titleSecond}>All in one vehicle partner</Text>
       </View>
       <TouchableOpacity style={styles.button} onPress={navigateToSignIn}>

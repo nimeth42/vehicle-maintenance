@@ -172,9 +172,10 @@ const SignInPage = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
-      <Text style={styles.title}>DRIVE LANKA</Text>
 
       <View style={styles.innerContainer}>
+      <Text style={styles.title}>SIGN IN</Text>
+
         <View>
           <Text style={styles.subtitle}>Welcome Back!</Text>
           <Text style={styles.textValue}>Email</Text>
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 40,
+    fontSize: 32,
     marginBottom: 20,
     color: 'white',
   },

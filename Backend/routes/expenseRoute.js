@@ -2,12 +2,13 @@
 const express = require('express');
 const route = express.Router();
 const expenseController = require('../controller/expenseController');
+const auth = require("../middleware/auth");
 
 const Expense = require('../models/expenseModel'); // for pieChart the expense route has been located
 
-route.post('/expenses', expenseController.createExpense);
+route.post('/expenses', auth,expenseController.createExpense);
 
-route.post('/pieChart',expenseController.getExpense);
+route.post('/pieChart',auth,expenseController.getExpense);
 
 // Route to fetch data for pie chart
 // route.get('/expenses', async (req, res) => {
