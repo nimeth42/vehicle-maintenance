@@ -12,7 +12,7 @@ exports.createExpense = async (req, res) => {
   
       // Parse the date string into a Date object
       const [day, month, year] = date.split('-');
-      const parsedDate = new Date(${year}-${month}-${day});
+      const parsedDate = new Date('${year}-${month}-${day}');
   
       // Check if any required field is empty
       if (!parsedDate || !odometer || !note || !totalCost || !selectedExpenseType || !plateNo) {
