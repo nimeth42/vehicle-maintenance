@@ -24,7 +24,7 @@ jobs:
       ## CI for Backend
       - run: cd Backend && npm ci
       ## CI for ML Model
-      - run: cd Backend/ML && pip install -r requirements
+      - run: cd Backend/ML && pip install -r requirements.txt
       ### Continuous Deployment(CD)
       ## pm2 restart for the backend
       - run: pm2 restart backendserver
