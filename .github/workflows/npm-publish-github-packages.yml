@@ -20,8 +20,13 @@ jobs:
         with:
            node-version: ${{ matrix.node-version }}
            cache: 'npm'
-      ## Continuous Integration(CI)
+      ### Continuous Integration(CI)
+      ## CI for Backend
       - run: cd Backend && npm ci
-      ## Continuous Deployment(CD)
-      ## pm2 runs the node application on background and autorefresh the new content
+      ## CI for ML Model
+      - run: cd Backend/ML && pip install -r requirements
+      ### Continuous Deployment(CD)
+      ## pm2 restart for the backend
       - run: pm2 restart backendserver
+      ## pm2 restart for the ML Model
+      - run: pm2 restart mlmodel
