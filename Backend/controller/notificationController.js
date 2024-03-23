@@ -267,7 +267,7 @@ exports.acceptNotification = async (req, res, next) => {
         }
 
         // Update the notificationFlag
-        const notification = await Notification.findOneAndUpdate({ plateNo: plateNo, _id: _id }, { notificationFlag: true }, { new: true });
+        const notification = await Notification.findOneAndUpdate({ plateNo: plateNo, _id: _id }, { notificationFlag: true ,viewFlag:false}, { new: true });
         if (!notification) {
             return res.status(404).json({
                 status: "failed",

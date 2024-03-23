@@ -239,4 +239,51 @@ exports.passwordChange = (req, res, next) => {
   
 };
 
+exports.accountChange = async (req, res, next) => {
+  const { plateNo, password, email, newEmail, newPassword } = req.body;
 
+  // Validate inputs
+  if (!plateNo || !password || !email) {
+    return res.status(400).json({ status: "failed", comment: "Plate number, password, and email are required", data: null });
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ status: "failed", comment: "Invalid email address", data: null });
+  }
+
+  try {
+    // Check if a user with the provided plate number and email exists
+    const existingUser = await User.findOne({ plateNo, email });
+
+    if (!existingUser) {
+      return res.status(404).json({ status: "failed", comment: "User with this plate number and email does not exist", data: null });
+    }
+
+    // Check if the provided password matches the hashed password stored in the database
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ status: "failed", comment: "Incorrect password", data: null });
+    }
+
+    // Update email and/or password
+    if (newEmail) {
+      existingUser.email = newEmail;
+    }
+    if (newPassword) {
+      existingUser.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    // Save the updated user
+    await existingUser.save();
+
+    // Respond with success message
+    return res.status(200).json({ status: "success", comment: "Account details updated successfully", data: null });
+  } catch (error) {
+    // Handle errors
+    console.error("Error updating account details:", error);
+    return res.status(500).json({ status: "failed", comment: "Internal server error", data: null });
+  }
+};

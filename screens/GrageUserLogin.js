@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Modal, Pressable } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Modal } from 'react-native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import baseUrl from '../baseUrl/baseUrl';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ChangeProfile = () => {
-  const [currentEmail, setCurrentEmail] = useState('');
-  const [currentVehicleNumber, setCurrentVehicleNumber] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+
+const GrageUserLogin = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [focusedInput, setFocusedInput] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
+  const navigation = useNavigation(); // Get the navigation object
 
+  const handleSignUpLinkPress = () => {
+    navigation.navigate('GrageUserRegister'); // Navigate to the sign-up page
+  };
   const handleFocus = (inputName) => {
     setFocusedInput(inputName);
   };
@@ -24,9 +28,9 @@ const ChangeProfile = () => {
     setFocusedInput(null);
   };
 
-  const handleUpdate = async () => {
+  const handleRegister = async () => {
     const emailRegex = /\S+@\S+\.\S+/;
-    if (!emailRegex.test(currentEmail)) {
+    if (!emailRegex.test(email)) {
       setEmailError('Invalid email address');
       return;
     } else {
@@ -34,19 +38,30 @@ const ChangeProfile = () => {
     }
 
     try {
-      const response = await axios.post(`${baseUrl}/api/v1/user/changeAccount`, {
-        plateNo: currentVehicleNumber,
-        email: currentEmail,
-        password: currentPassword,
-        newEmail: newEmail,
-        newPassword: newPassword
+      const response = await axios.post(`${baseUrl}/api/v1/tag/grageLogin`, {
+        username: username,
+        email: email,
+        password: password,
       });
 
+
       console.log('Response from backend:', response.data);
-      setModalMessage('Successfully Update');
+
+
+      await AsyncStorage.setItem('token', response.data.token); // Assuming token is returned from backend
+      await AsyncStorage.setItem('UserEmail', response.data.data.email);
+
+      const storedToken = await AsyncStorage.getItem('token');
+      const userEmail = await AsyncStorage.getItem('UserEmail');
+
+      console.log("*** "+storedToken);
+      console.log("*** "+userEmail);
+
+
+      setModalMessage('Successfully login');
       setModalVisibleOtpSucess(true);
     } catch (error) {
-      console.error('Error updating account details:', error);
+      console.error('Error registering user:', error);
       if (error.response) {
         console.log(error.response.data.comment);
         setModalMessage(error.response.data.comment);
@@ -61,35 +76,36 @@ const ChangeProfile = () => {
         setModalVisible(true);
       }
     }
+
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Change Profile</Text>
+      <Text style={styles.title}>GrageUser SignIn</Text>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Current Vehicle Number:</Text>
+        <Text style={styles.label}>Username:</Text>
         <TextInput
-          style={[styles.input, focusedInput === 'currentVehicleNumber' ? { borderColor: 'yellow' } : null]}
-          value={currentVehicleNumber}
-          onChangeText={setCurrentVehicleNumber}
-          onFocus={() => handleFocus('currentVehicleNumber')}
+          style={[styles.input, focusedInput === 'username' ? { borderColor: 'yellow' } : null]}
+          value={username}
+          onChangeText={setUsername}
+          onFocus={() => handleFocus('username')}
           onBlur={handleBlur}
-          placeholder="Enter current vehicle number"
+          placeholder="Enter username"
           placeholderTextColor="black"
-          autoCapitalize="characters"
+          autoCapitalize="none"
           selectionColor="black"
           color="black"
         />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Current Email:</Text>
+        <Text style={styles.label}>Email:</Text>
         <TextInput
-          style={[styles.input, focusedInput === 'currentEmail' ? { borderColor: 'yellow' } : null]}
-          value={currentEmail}
-          onChangeText={setCurrentEmail}
-          onFocus={() => handleFocus('currentEmail')}
+          style={[styles.input, focusedInput === 'email' ? { borderColor: 'yellow' } : null]}
+          value={email}
+          onChangeText={setEmail}
+          onFocus={() => handleFocus('email')}
           onBlur={handleBlur}
-          placeholder="Enter current email"
+          placeholder="Enter email"
           placeholderTextColor="black"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -99,14 +115,14 @@ const ChangeProfile = () => {
         {emailError ? <Text style={styles.error}>{emailError}</Text> : null}
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Current Password:</Text>
+        <Text style={styles.label}>Password:</Text>
         <TextInput
-          style={[styles.input, focusedInput === 'currentPassword' ? { borderColor: 'yellow' } : null]}
-          value={currentPassword}
-          onChangeText={setCurrentPassword}
-          onFocus={() => handleFocus('currentPassword')}
+          style={[styles.input, focusedInput === 'password' ? { borderColor: 'yellow' } : null]}
+          value={password}
+          onChangeText={setPassword}
+          onFocus={() => handleFocus('password')}
           onBlur={handleBlur}
-          placeholder="Enter current password"
+          placeholder="Enter password"
           placeholderTextColor="black"
           secureTextEntry={true}
           autoCapitalize="none"
@@ -114,39 +130,9 @@ const ChangeProfile = () => {
           color="black"
         />
       </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>New Email:</Text>
-        <TextInput
-          style={[styles.input, focusedInput === 'newEmail' ? { borderColor: 'yellow' } : null]}
-          value={newEmail}
-          onChangeText={setNewEmail}
-          onFocus={() => handleFocus('newEmail')}
-          onBlur={handleBlur}
-          placeholder="Enter new email"
-          placeholderTextColor="black"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          selectionColor="black"
-          color="black"
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>New Password:</Text>
-        <TextInput
-          style={[styles.input, focusedInput === 'newPassword' ? { borderColor: 'yellow' } : null]}
-          value={newPassword}
-          onChangeText={setNewPassword}
-          onFocus={() => handleFocus('newPassword')}
-          onBlur={handleBlur}
-          placeholder="Enter new password"
-          placeholderTextColor="black"
-          secureTextEntry={true}
-          autoCapitalize="none"
-          selectionColor="black"
-          color="black"
-        />
 
-<Modal
+       {/* Modal to display when registration fails */}
+       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -175,8 +161,8 @@ const ChangeProfile = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
-            <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => { setModalVisibleOtpSucess(false); navigation.navigate('GrageUser'); }} style={styles.customButtonSucess}>
   <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
 </TouchableOpacity>
 
@@ -184,17 +170,16 @@ const ChangeProfile = () => {
         </View>
       </Modal>
 
-
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleUpdate}>
-        <Text style={styles.buttonText}>Update</Text>
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
-
-      {/* Modal for showing messages */}
-    
+      <TouchableOpacity onPress={handleSignUpLinkPress}>
+        <Text style={styles.signUpLink}>Don't have an account? Sign Up</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
+
 
 
 const styles = StyleSheet.create({
@@ -298,6 +283,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FFA500',
   },
+  signUpLink: {
+    color: '#FFA500',
+    marginTop: 20,
+    textAlign: 'center',
+  },
 });
 
-export default ChangeProfile;
+export default GrageUserLogin;

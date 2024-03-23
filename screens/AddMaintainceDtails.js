@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar, Alert,Modal } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInput, StatusBar, Alert,Modal ,SafeAreaView,} from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios'; // Import axios for making HTTP requests
 import baseUrl from '../baseUrl/baseUrl';
@@ -124,8 +124,8 @@ const AddMaintainceDetails = () => {
         }
     }
     return (
-        <View style={styles.container}>
-            <StatusBar backgroundColor="black" barStyle="light-content" />
+        <SafeAreaView style={styles.container}>
+        <StatusBar backgroundColor="black" barStyle="light-content" />
 
             <Text style={styles.heading}>Add Maintenance Details</Text>
             <Text style={styles.textTopic}>Real time updates</Text>
@@ -200,7 +200,7 @@ const AddMaintainceDetails = () => {
           </View>
         </View>
       </Modal>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -281,49 +281,58 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
-    }, modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalText: {
-    marginBottom: 20,
-    fontSize: 18,
-    textAlign: 'center',
-    
-  },
-  customButton: {
-    backgroundColor: 'red',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    width:150,
-  },
-  customButtonSucess:{
-    backgroundColor: 'blue',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    width:150,
-  },buttonText:{
-    textAlign:'center',
-    color:'white',
-    fontSize:18,
-  }, loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#FFA500',
-  },
+    },  modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+      },
+      modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: '80%', // Set the width to 80% of the screen width
+        maxWidth: 400, // Maximum width of the modal content
+      },
+      customButton: {
+        backgroundColor: 'red',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        width:100,
+        marginTop:10,
+      },
+      customButtonSucess:{
+        backgroundColor: 'blue',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        width:100,
+        marginTop:10,
+      },buttonText:{
+        textAlign:'center',
+        color:'white',
+        fontSize:18,
+      }, loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#FFA500',
+      },modalText:{
+        fontSize:18
+      },loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#FFA500',
+      },
 });

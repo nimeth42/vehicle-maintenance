@@ -8,7 +8,8 @@ const testController = require("../controller/test");
 route.post("/register", userController.driverRegister);
 route.post("/login", userController.driverLogin);
 route.post("/changePassword",userController.passwordChange);
-route.post("/test",auth,testController.test)
+route.post("/test",auth,testController.test);
+route.post("/changeAccount",userController.accountChange);
 
 module.exports = route;
 

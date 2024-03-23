@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, Modal, Button, SafeAreaView } from 'react-native'; // Import necessary components
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, Modal, Button, SafeAreaView,Dimensions  } from 'react-native'; // Import necessary components
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import baseUrl from '../baseUrl/baseUrl'; // Import the baseUrl function
@@ -181,11 +181,9 @@ const SignUpPage = () => {
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Sign Up</Text>
           </TouchableOpacity>
 
-          <Text style={styles.orText}>---------------   Or continue with   ----------------</Text>
+          <Text style={styles.orText}>-------------   Or continue with   --------------</Text>
 
-          <TouchableOpacity style={[styles.button, styles.googleButton, { alignSelf: 'center' }]} onPress={handleSubmit}>
-            <Text style={[styles.buttonText, styles.buttonTextBold, styles.googleButtonText]}>Google</Text>
-          </TouchableOpacity>
+          
 
           <View style={styles.loginContainer}>
             <Text style={styles.normalText}>Already have an account? </Text>

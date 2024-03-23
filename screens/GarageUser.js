@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, TextInpu
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import baseUrl from '../baseUrl/baseUrl';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const GarageUser = () => {
     const [isLoading, setIsLoading] = useState(false); // State to track loading status
@@ -65,14 +66,21 @@ const GarageUser = () => {
     }
 
     const handleSubmit = async () => {
+        const storedUserEmail = await AsyncStorage.getItem('UserEmail');
+  
+        // Log the retrieved email to verify
+        console.log('Stored User Email:', storedUserEmail);
+
         if (!state.note.trim() || !state.cost.trim() || !state.photo || !state.vehicleNumber.trim()) {
             toast('Please fill in all fields and select an image');
             return;
         }
+        
 
         setIsLoading(true);
 
         const dataObject = {
+            userEmail:storedUserEmail,
             plateNo: state.vehicleNumber, 
             note: state.note,
             cost: state.cost,

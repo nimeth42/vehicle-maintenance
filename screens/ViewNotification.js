@@ -133,6 +133,7 @@ const ViewMaintenanceDetails = () => {
 
       await axios.post(`${baseUrl}/api/v1/notification/viewOne`, {
         _id: _id,
+
         plateNo: storedPlateNo
       });
   
@@ -158,13 +159,13 @@ const ViewMaintenanceDetails = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000" />
-      <Text style={styles.title}>Scan details</Text>
+      <Text style={styles.title}>Notifcation</Text>
       <ScrollView style={styles.scrollView}>
         <View style={styles.subContainer}>
           {maintenanceData.map((item) => (
             <View key={item._id} style={[styles.itemContainer, { backgroundColor: item.notificationFlag ? '#a9a9a9' : '#EEA818' }]}>
-<Text style={[styles.text, { color: item.viewFlag ? 'white' : 'blue' }]}>Date: {formatDate(item.date)}</Text>
-              <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'blue' }]}>Note: {item.note}</Text>
+<Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Date: {formatDate(item.date)}</Text>
+              <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Note: {item.note}</Text>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={() => handleAccept(item._id)} style={[styles.button, styles.acceptButton]}>
                   <Text style={styles.buttonText}>Accept</Text>
@@ -290,6 +291,8 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
+    width:'80%',
+    maxWidth:400,
   },
   customButton: {
     backgroundColor: 'red',

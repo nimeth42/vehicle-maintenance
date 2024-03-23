@@ -301,13 +301,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
   },
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
+    width: '80%', // Set the width to 80% of the screen width
+    maxWidth: 400, // Maximum width of the modal content
+
   },
   modalText: {
     marginBottom: 20,

@@ -19,8 +19,10 @@ import NewPasswordPage from './screens/NewPasswordPage';
 import ViewMaintainceDetails from './screens/ViewMaintaince';
 import ViewNotification from './screens/ViewNotification';
 import ViewScanner from './screens/ViewScanner';
+import ChangeProfile from './screens/ChangeProfile';
 //import ViewMaintainceDetails from './screens/ViewMaintainceDetails';
-
+import GrageUserRegister from './screens/GrageUserRegiter';
+import GrageUserLogin from './screens/GrageUserLogin';
 const App = () => {
   const Stack = createStackNavigator();
 
@@ -43,9 +45,13 @@ const App = () => {
     <>
     
       { <AppNavigations/> }
+      {/* <ChangeProfile/> */}
 
     {/* <GrageUserRegister/> */}
-        
+    {/* <NavigationContainer>
+
+        <GrageUserLogin/>
+      </NavigationContainer> */}
 
       {/* <GarageUser/> */}
        {/* <AddMaintainceDetails/> */}

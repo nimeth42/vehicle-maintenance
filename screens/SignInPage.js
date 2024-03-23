@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, Modal, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, Modal, SafeAreaView ,Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import baseUrl from '../baseUrl/baseUrl';
@@ -16,7 +16,8 @@ const SignInPage = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
-
+  const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
   const handleForgotPassword = () => {
     navigation.navigate('OtpPage');
   };
@@ -26,7 +27,9 @@ const SignInPage = ({ navigation }) => {
   };
 
   const handleGrageUser = () => {
-    navigation.navigate('GrageUser');
+    navigation.navigate('GrageUserLogin');
+
+    // navigation.navigate('GrageUser');
   };
 
   // const handleHomePage = async () => {
@@ -275,9 +278,9 @@ const SignInPage = ({ navigation }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => { setModalVisibleOtpSucess(false); navigation.navigate('HomePage'); }} style={styles.customButtonSucess}>
-  <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
+  <Text style={[styles.buttonText, {textAlign: 'center'}]}>OK</Text>
 </TouchableOpacity>
 
           </View>

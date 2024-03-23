@@ -36,8 +36,12 @@ exports.grageUserTag = (req, res, next) => {
             const plateNo = additionalData.plateNo;
             console.log("Plate number:", plateNo);
 
+            const userEmail = additionalData.userEmail;
+            console.log("88 "+userEmail);
+
             // Check if the user exists in the database
             try {
+                
                 const user = await User.findOne({ plateNo: plateNo });
                 if (!user) {
                     return res.status(404).json({

@@ -17,6 +17,8 @@ import ViewMaintainceDetails from '../screens/ViewMaintaince';
 import ViewNotification from '../screens/ViewNotification';
 import ViewScanner from '../screens/ViewScanner';
 import GrageUserRegister from '../screens/GrageUserRegiter';
+import ChangeProfile from '../screens/ChangeProfile';
+import GrageUserLogin from '../screens/GrageUserLogin';
 
 
 const AppNavigations = () => {
@@ -39,7 +41,10 @@ const AppNavigations = () => {
         <Stack.Screen name="ViewMaintainceDetails" component={ViewMaintainceDetails} />
         <Stack.Screen name="ViewNotifications" component={ViewNotification} />
         <Stack.Screen name="ViewScanner" component={ViewScanner} />
-        
+        <Stack.Screen name="ChangeProfile" component={ChangeProfile} />
+        <Stack.Screen name="GrageUserRegister" component={GrageUserRegister} />
+        <Stack.Screen name="GrageUserLogin" component={GrageUserLogin} />
+
 
 
       </Stack.Navigator>

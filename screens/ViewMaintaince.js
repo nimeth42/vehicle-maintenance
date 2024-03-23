@@ -57,7 +57,9 @@ const ViewMaintainceDetails = () => {
 
       // Make a POST request to delete the maintenance item with the given id
       await axios.post(`${baseUrl}/api/v1/maintaince/deleteMaintaince`, {
-        _id: id, // Use the passed id parameter
+        // _id: id, // Use the passed id parameter
+        _id: "sdadadad", // Use the passed id parameter
+
       });
 
       // If deletion is successful, update the data state or do any necessary operations
@@ -202,6 +204,29 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+  },
+ 
+  modalText: {
+    marginBottom: 20,
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  customButton: {
+    backgroundColor: 'red', // Set the background color of the button to red
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   }, modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -213,21 +238,24 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
-    width: 250, // Adjust width as needed
+    width: '80%', // Set the width to 80% of the screen width
+    maxWidth: 400, // Maximum width of the modal content
   },
   customButton: {
     backgroundColor: 'red',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
-    width:150,
+    width:100,
+    marginTop:10,
   },
   customButtonSucess:{
     backgroundColor: 'blue',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
-    width:150,
+    width:100,
+    marginTop:10,
   },buttonText:{
     textAlign:'center',
     color:'white',
