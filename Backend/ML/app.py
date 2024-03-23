@@ -1,51 +1,3 @@
-# import numpy as np
-# import tensorflow as tf
-# import matplotlib.pyplot as plt
-# import cv2
-# import base64
-# import json
-# from flask import Flask, request, jsonify, send_from_directory
-
-# app = Flask(__name__)
-
-# model = tf.keras.models.load_model('trained_model.h5')
-
-# @app.route("/predict", methods=["POST"])
-# def predict():
-#     if 'image' not in request.files:
-#         return jsonify({"error": "No image provided"}), 400
-
-#     file = request.files['image']
-#     if file.filename == '':
-#         return jsonify({"error": "No file selected"}), 400
-
-#     if file:
-#         # Save the file to a temporary location
-#         file_path = "/tmp/image.jpg"
-#         file.save(file_path)
-
-#         # Convert the image data to a np.array and reshape it
-#         img = cv2.imread(file_path)
-#         img = cv2.resize(img, (64, 64))
-#         img = np.expand_dims(img, axis=0)
-#         img = img/255
-
-#         # Make a prediction
-#         prediction = model.predict(img)
-#         # Get the index of the highest probability class
-#         result_index = np.where(prediction[0] == max(prediction[0]))
-#         result = {
-#             "class_index": result_index[0][0],
-#             "probability": max(prediction[0]),
-#             "class_name": test_set.class_names[result_index[0][0]]
-#         }
-#         # Delete the temporary file
-#         # os.remove(file_path)
-#         return jsonify(result)
-
-# if __name__ == "__main__":
-#     app.run()
-
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 import numpy as np
@@ -103,4 +55,4 @@ def predict():
     return jsonify({"class": result_class})
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
