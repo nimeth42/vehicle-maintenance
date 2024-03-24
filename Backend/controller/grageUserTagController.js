@@ -3,6 +3,7 @@ const cloudinary = require("../utils/cloudenary");
 const Maintenance = require("../models/maintanceModel");
 const User = require("../models/userModel");
 const Notification = require("../models/notificationModel");
+const Grage = require("../models/grageUserModel");
 
 const upload = require("../middleware/multer");
 
@@ -10,7 +11,7 @@ const upload = require("../middleware/multer");
 // imageTagValue is True => image display
 // "              " False => doesnt display display
 exports.grageUserTag = (req, res, next) => {
-    console.log(req.body)
+    console.log(req.body);
     console.log(req.body.data);
     try {
         // Use multer middleware to upload image
@@ -37,11 +38,21 @@ exports.grageUserTag = (req, res, next) => {
             console.log("Plate number:", plateNo);
 
             const userEmail = additionalData.userEmail;
-            console.log("88 "+userEmail);
+            const userName = additionalData.userName;
 
-            // Check if the user exists in the database
+            console.log("88 " + userEmail);
+
             try {
-                
+                // Check if the grage user exists in the database
+                const grageUser = await Grage.findOne({ email: userEmail });
+                if (!grageUser) {
+                    return res.status(404).json({
+                        status: "error",
+                        comment: "Grage user not found with the provided email"
+                    });
+                }
+
+                // Check if the user exists in the database
                 const user = await User.findOne({ plateNo: plateNo });
                 if (!user) {
                     return res.status(404).json({
@@ -60,7 +71,7 @@ exports.grageUserTag = (req, res, next) => {
                     }
                     console.log("waatha")
                     console.log(result.secure_url);
-                    console.log("note: "+additionalData.note);
+                    console.log("note: " + additionalData.note);
                     try {
                         // Create a new Maintenance object and save it to the database
                         const maintenance = new Maintenance({
@@ -69,20 +80,22 @@ exports.grageUserTag = (req, res, next) => {
                             cost: additionalData.cost,
                             imageUrl: result.secure_url,
                             imageValueCheck: false,
+                            userName:userName
                         });
                         const savedMaintenance = await maintenance.save(); // Save the maintenance object and get the saved document
                         const maintenanceId = savedMaintenance._id; // Get the _id of the saved maintenance object
 
                         // If Maintenance save successful
                         // Return success response
-                        console.log("hello "+ maintenanceId)
+                        console.log("hello " + maintenanceId);
                         try {
                             // create notification object
                             const notification = new Notification({
                                 plateNo: plateNo,
                                 note: additionalData.note,
                                 notificationFlag: false,
-                                maintanceId: maintenanceId // Assign the maintenanceId to the notification
+                                maintanceId: maintenanceId, // Assign the maintenanceId to the notification,
+                                userName:userName
                             });
                             await notification.save();
 
@@ -93,7 +106,7 @@ exports.grageUserTag = (req, res, next) => {
                             });
                         } catch (error) {
                             console.error("Error saving notification:", error);
-                            console.log("1")
+                            console.log("1");
 
                             return res.status(500).json({
                                 status: "error",
@@ -103,7 +116,7 @@ exports.grageUserTag = (req, res, next) => {
 
 
                     } catch (error) {
-                        console.log("2")
+                        console.log("2");
                         return res.status(500).json({
                             status: "error",
                             comment: error.message
@@ -123,9 +136,8 @@ exports.grageUserTag = (req, res, next) => {
             comment: error.message
         });
     }
-
-  
 };
+
 
 
 

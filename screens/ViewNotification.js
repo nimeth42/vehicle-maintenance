@@ -158,7 +158,7 @@ const ViewMaintenanceDetails = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
       <Text style={styles.title}>Notifcation</Text>
       <ScrollView style={styles.scrollView}>
         <View style={styles.subContainer}>
@@ -166,6 +166,8 @@ const ViewMaintenanceDetails = () => {
             <View key={item._id} style={[styles.itemContainer, { backgroundColor: item.notificationFlag ? '#a9a9a9' : '#EEA818' }]}>
 <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Date: {formatDate(item.date)}</Text>
               <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Note: {item.note}</Text>
+              <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Tag: {item.userName}</Text>
+
               <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={() => handleAccept(item._id)} style={[styles.button, styles.acceptButton]}>
                   <Text style={styles.buttonText}>Accept</Text>
@@ -210,7 +212,7 @@ const ViewMaintenanceDetails = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
             <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
             </TouchableOpacity>
@@ -302,7 +304,7 @@ const styles = StyleSheet.create({
     width:150,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,

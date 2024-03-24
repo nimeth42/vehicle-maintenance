@@ -63,6 +63,7 @@ exports.addMaintanceDetails = (req, res, next) => {
                             cost: additionalData.cost,
                             imageUrl: result.secure_url,
                             imageValueCheck: true,// set image value to,when user uploaed the image and auto matically display
+                            
                         });
                         await maintenance.save();
 
@@ -100,58 +101,59 @@ exports.addMaintanceDetails = (req, res, next) => {
 };
 
 exports.viewMaintanceDetails = (req, res, next) => {
-
     // Check if plateNo is provided in the request body
-   if (!req.body.plateNo ) {
-       return res.status(404).json({
-           status: "error",
-           comment: "plateNo is required",
-           data: null,
-       });
-   }
-
-   const plateNo = req.body.plateNo;
-
-   // Find the user in the database based on the provided plateNo
-   User.findOne({ plateNo: plateNo })
-       .then(user => {
-           // If user not found, return failed status
-           if (!user) {
-               return res.status(404).json({
-                   status: "failed",
-                   comment: "User not found",
-                   data: null,
-               });
-           }
-
-           // Retrieve maintenance records where imageValueCheck is true
-           Maintenance.find({ plateNo: plateNo, imageValueCheck: true })
-           .then(notifications => {
-               return res.status(200).json({
-                   status: "success",
-                   comment: "Notifications retrieved successfully",
-                   data: notifications,
-               });
-           })
-           .catch(error => {
-               console.error("Error retrieving notifications:", error);
-               return res.status(500).json({
-                   status: "error",
-                   comment: "Failed to retrieve notifications",
-                   data: null,
-               });
-           });
-       })
-       .catch(error => {
-           console.error("Error finding user:", error);
-           return res.status(500).json({
-               status: "error",
-               comment: "Failed to find user",
-               data: null,
-           });
+    if (!req.body.plateNo) {
+        return res.status(404).json({
+            status: "error",
+            comment: "plateNo is required",
+            data: null,
         });
-       
-}
+    }
+
+    const plateNo = req.body.plateNo;
+
+    // Find the user in the database based on the provided plateNo
+    User.findOne({ plateNo: plateNo })
+        .then(user => {
+            // If user not found, return failed status
+            if (!user) {
+                return res.status(404).json({
+                    status: "failed",
+                    comment: "User not found",
+                    data: null,
+                });
+            }
+
+            // Retrieve maintenance records where imageValueCheck is true and sort them by createdAt field in descending order
+            Maintenance.find({ plateNo: plateNo, imageValueCheck: true })
+                .sort({ createdAt: -1 }) // Sort by createdAt field in descending order
+                .then(notifications => {
+                    return res.status(200).json({
+                        status: "success",
+                        comment: "Notifications retrieved successfully",
+                        data: notifications,
+                    });
+                })
+                .catch(error => {
+                    console.error("Error retrieving notifications:", error);
+                    return res.status(500).json({
+                        status: "error",
+                        comment: "Failed to retrieve notifications",
+                        data: null,
+                    });
+                });
+        })
+        .catch(error => {
+            console.error("Error finding user:", error);
+            return res.status(500).json({
+                status: "error",
+                comment: "Failed to find user",
+                data: null,
+            });
+        });
+};
+
+
 
 exports.deleteMaintanceDetials = (req, res, next) => {
     const id = req.body._id; // Get the ID of the maintenance record to be deleted from the request body

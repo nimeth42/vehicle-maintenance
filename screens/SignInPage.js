@@ -278,7 +278,7 @@ const SignInPage = ({ navigation }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => { setModalVisibleOtpSucess(false); navigation.navigate('HomePage'); }} style={styles.customButtonSucess}>
   <Text style={[styles.buttonText, {textAlign: 'center'}]}>OK</Text>
 </TouchableOpacity>
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     width:150,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,

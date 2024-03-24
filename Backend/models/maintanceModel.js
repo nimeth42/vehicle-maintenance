@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const maintenanceSchema = mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId, auto: true, unique: true }, // Specify unique and auto options for _id
+  _id: { type: mongoose.Schema.Types.ObjectId, auto: true, unique: true },
   plateNo: {
     type: String,
     required: [true, "Plate number is required"],
@@ -14,7 +14,7 @@ const maintenanceSchema = mongoose.Schema({
   },
   note:{
     type: String, 
-    required: [true, "Note is required"], // Corrected typo and added an array
+    required: [true, "Note is required"],
   },
   cost:{
     type: Number,
@@ -22,14 +22,19 @@ const maintenanceSchema = mongoose.Schema({
   },
   imageUrl:{
     type: String,
-    required: [true, "Image is required"], // Corrected typo and added an array
+    required: [true, "Image is required"],
+  }, 
+  userName: {
+    type: String,
+    default: "you", // Set default value to "you"
+    
   },
   imageValueCheck:{
     type: Boolean,
     default: true,
   }
 }, {
-  timestamps: true // Automatically add createdAt and updatedAt fields
+  timestamps: true
 });
 
 module.exports = mongoose.model("Maintenance", maintenanceSchema);

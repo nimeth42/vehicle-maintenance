@@ -125,7 +125,7 @@ const AddMaintainceDetails = () => {
     }
     return (
         <SafeAreaView style={styles.container}>
-        <StatusBar backgroundColor="black" barStyle="light-content" />
+        <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
 
             <Text style={styles.heading}>Add Maintenance Details</Text>
             <Text style={styles.textTopic}>Real time updates</Text>
@@ -193,7 +193,7 @@ const AddMaintainceDetails = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
               <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
             </TouchableOpacity>
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black',
+        backgroundColor: '#1e1e1e',
     },
     wrapBtn: {
         flexDirection: "row",
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
         marginTop:10,
       },
       customButtonSucess:{
-        backgroundColor: 'blue',
+        backgroundColor: '#FFA500',
         paddingVertical: 12,
         paddingHorizontal: 20,
         borderRadius: 5,

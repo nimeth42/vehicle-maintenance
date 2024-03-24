@@ -20,7 +20,6 @@ import GrageUserRegister from '../screens/GrageUserRegiter';
 import ChangeProfile from '../screens/ChangeProfile';
 import GrageUserLogin from '../screens/GrageUserLogin';
 
-
 const AppNavigations = () => {
   const Stack = createStackNavigator();
 
@@ -44,7 +43,6 @@ const AppNavigations = () => {
         <Stack.Screen name="ChangeProfile" component={ChangeProfile} />
         <Stack.Screen name="GrageUserRegister" component={GrageUserRegister} />
         <Stack.Screen name="GrageUserLogin" component={GrageUserLogin} />
-
 
 
       </Stack.Navigator>

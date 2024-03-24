@@ -67,7 +67,10 @@ const GarageUser = () => {
 
     const handleSubmit = async () => {
         const storedUserEmail = await AsyncStorage.getItem('UserEmail');
-  
+        const storedToken = await AsyncStorage.getItem('token');
+        const userName = await AsyncStorage.getItem('UserName');
+
+
         // Log the retrieved email to verify
         console.log('Stored User Email:', storedUserEmail);
 
@@ -84,6 +87,7 @@ const GarageUser = () => {
             plateNo: state.vehicleNumber, 
             note: state.note,
             cost: state.cost,
+            userName:userName
         };
 
         const dataString = JSON.stringify(dataObject);
@@ -100,6 +104,8 @@ const GarageUser = () => {
             const response = await axios.post(`${baseUrl}/api/v1/tag/grageUserTag`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${storedToken}`, // Include token in request header
+
                 },
             });
             setModalMessage("sucessfully added");
@@ -199,7 +205,7 @@ const GarageUser = () => {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+                        <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
                         <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
                             <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
                         </TouchableOpacity>
@@ -250,11 +256,11 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     heading: {
-        fontSize: 28,
+        fontSize: 25,
         fontWeight: 'bold',
         color: '#FFA500',
         marginTop: 10,
-        marginBottom: 20,
+        marginBottom: 1,
     },
     input: {
         marginBottom: 20,
@@ -321,7 +327,7 @@ const styles = StyleSheet.create({
     width:150,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -345,17 +351,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
-  },
-  modalText: {
-    marginBottom: 20,
-    fontSize: 18,
-    textAlign: 'center',
-    
+    width: '80%', // Set the width to 80% of the screen width
+    maxWidth: 400, // Maximum width of the modal content
+
   },
   customButton: {
     backgroundColor: 'red',
@@ -365,7 +374,7 @@ const styles = StyleSheet.create({
     width:150,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -383,19 +392,22 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#FFA500',
-  },
-  loadingContainer: {
+  },modalText:{
+    fontSize:18
+  },loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
-    width: '100%',
-    height: '100%',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#FFA500', // Orange color
+    color: '#FFA500',
+  },modalText: {
+    marginBottom: 10,
+    fontSize: 18,
+    textAlign: 'center',
+    color: 'black',
+    padding: 3, // Add padding here
   },
 });

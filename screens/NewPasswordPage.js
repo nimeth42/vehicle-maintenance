@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar,Modal} from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 import baseUrl from '../baseUrl/baseUrl'; // Import the baseUrl function
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,6 +13,7 @@ const NewPasswordPage = () => {
   const [reEnterPasswordError, setReEnterPasswordError] = useState('');
   const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
   const [modalMessage, setModalMessage] = useState(''); // State to hold modal message
+  const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false); // Added this state variable
 
   const validatePasswords = () => {
     if (reEnterPassword !== password) {
@@ -42,7 +43,7 @@ const NewPasswordPage = () => {
       console.log('Response from backend:', response.data);
       
       setModalMessage('Success');
-      setModalVisible(true);
+      setModalVisibleOtpSucess(true);
       navigation.navigate('SignInPage');
 
     } catch (error) {
@@ -50,6 +51,19 @@ const NewPasswordPage = () => {
       // console.error('Error sending OTP:', error);
       if (error.response) {
         setModalMessage(error.response.data.comment);
+        setModalVisible(true);
+      }else if (error.request) {
+        // Network error occurred
+        console.error('Network error:', error.request);
+        // Set error message or take necessary action for network error
+        // For example, display a message to the user indicating network issue
+        setModalMessage('Network error. Please check your internet connection.');
+        setModalVisible(true);
+      } else {
+        // Something else went wrong
+        console.error('Error:', error.message);
+        // Set error message or take necessary action for other types of errors
+        setModalMessage('An error occurred. Please try again later.');
         setModalVisible(true);
       }
     }
@@ -99,6 +113,42 @@ const NewPasswordPage = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'red' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.customButton}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisibleOtpSucess} // Changed this line
+        onRequestClose={() => {
+          setModalVisibleOtpSucess(false); // Changed this line
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
+            <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -168,24 +218,61 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
- 
-  modalText: {
-    marginBottom: 20,
-    fontSize: 18,
-    textAlign: 'center',
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '80%', // Set the width to 80% of the screen width
+    maxWidth: 400, // Maximum width of the modal content
   },
   customButton: {
-    backgroundColor: 'red', // Set the background color of the button to red
+    backgroundColor: 'red',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
+    width:100,
+    marginTop:10,
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    textAlign: 'center',
+  customButtonSucess:{
+    backgroundColor: '#FFA500',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    width:100,
+    marginTop:10,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },modalText:{
+    fontSize:18
+  },loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
   },
 });
 

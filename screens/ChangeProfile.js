@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     marginTop:10,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,

@@ -224,7 +224,7 @@ const SignUpPage = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => { setModalVisibleOtpSucess(false); navigation.navigate('SignInPage'); }} style={styles.customButtonSucess}>
   <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
 </TouchableOpacity>
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     marginTop:10,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, StatusBar, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, StatusBar, TouchableOpacity, Modal, ActivityIndicator,SafeAreaView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import baseUrl from '../baseUrl/baseUrl';
@@ -90,8 +90,8 @@ const AddExpensesPage = () => {
 
   
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor="black" barStyle="light-content" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
 
       <Text style={styles.heading}>Add Expenses</Text>
       <View style={styles.datePickerContainer}>
@@ -225,14 +225,15 @@ const AddExpensesPage = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
             <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </View>
+      
+    </SafeAreaView>
   );
 };
 
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#1e1e1e',
     paddingHorizontal: 20,
     paddingTop: 50,
   },
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     width:150,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,

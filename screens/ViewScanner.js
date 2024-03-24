@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, StatusBar, TextInput } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import baseUrl from '../baseUrl/baseUrl';
 import axios from 'axios';
+import descriptions from '../MLDescription/mlDescription';
 
 const GarageUser = () => {
     const [state, setState] = useState({
         photo: '',
-        description: '',
+        responseText: '', // Added state for response text
     });
 
     const option = {
@@ -35,7 +35,7 @@ const GarageUser = () => {
             toast('Error occurred', res.errorCode);
         } else {
             const photoUri = res.uri ? res.uri : res.assets[0].uri;
-            setState({ ...state, photo: photoUri });
+            setState({ ...state, photo: photoUri, responseText: '' }); // Clear responseText state
         }
     }
 
@@ -44,26 +44,29 @@ const GarageUser = () => {
             toast('Please select an image');
             return;
         }
-
+    
         const formData = new FormData();
         formData.append('image', {
             uri: state.photo,
             type: 'image/jpeg',
             name: 'maintenance_image.jpg',
         });
-
-        axios.post(`${baseUrl}/api/v1/tag/grageUserTag`, formData, {
+    
+        axios.post(`http://18.191.195.183:5000/predict`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
         .then(response => {
             console.log(response.data);
-            if (response.data.success === "success") {
-                toast('Submitted successfully');
-                setState({ ...state, description: response.data.description });
+            const className = response.data.class;
+
+            // Find the description value for the className
+            const descriptionObj = descriptions.find(item => item.key === className);
+            if (descriptionObj) {
+                setState({ ...state, responseText: descriptionObj.value });
             } else {
-                throw new Error(response.data.comment);
+                setState({ ...state, responseText: 'Description not found' });
             }
         })
         .catch(error => {
@@ -71,7 +74,7 @@ const GarageUser = () => {
             Alert.alert('Error', error.message || 'Failed to submit');
         });
     }
-
+    
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor="black" barStyle="light-content" />
@@ -93,23 +96,20 @@ const GarageUser = () => {
             <TouchableOpacity style={styles.buttonSubmit} onPress={handleSubmit}>
                 <Text style={styles.buttonTextSubmit}>Submit</Text>
             </TouchableOpacity>
-            {state.description ? (
-                <View style={styles.descriptionBox}>
-                    <Text style={styles.description}>{state.description}</Text>
+            {state.responseText ? (
+                <View style={styles.textInputContainer}>
+                    <TextInput
+                        style={styles.descriptionInput}
+                        value={state.responseText}
+                        placeholder="Response text"
+                        editable={false}
+                        multiline={true}
+                    />
                 </View>
             ) : null}
-            <TextInput
-                style={styles.descriptionInput}
-                value={state.description}
-                placeholder="Description about Indicator"
-                editable={false}
-                multiline={true}
-            />
         </View>
     );
 };
-
-export default GarageUser;
 
 const styles = StyleSheet.create({
     container: {
@@ -166,23 +166,20 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderRadius: 10,
     },
-    descriptionBox: {
-        backgroundColor: 'grey',
-        padding: 60,
-        borderRadius: 10,
-        marginTop: 20,
-    },
-    description: {
-        fontSize: 16,
-        color: 'white',
-    },
-    descriptionInput: {
-        backgroundColor: 'white',
+    textInputContainer: {
+        backgroundColor: '#FFF',
         padding: 10,
         borderRadius: 10,
         marginTop: 20,
-        width: 300,
-        height: 200,
+        width: '80%',
+        height: 150,
+    },
+    descriptionInput: {
+        flex: 1,
         textAlignVertical: 'top',
+        fontSize:18,
+        color:'black'
     },
 });
+
+export default GarageUser;

@@ -29,6 +29,7 @@ const ViewMaintainceDetails = () => {
         });
 
         setData(response.data.data); // Update state with response data
+        console.log(response.data);
       } catch (error) {
         if (error.response) {
           setModalMessage(error.response.data.comment);
@@ -57,8 +58,7 @@ const ViewMaintainceDetails = () => {
 
       // Make a POST request to delete the maintenance item with the given id
       await axios.post(`${baseUrl}/api/v1/maintaince/deleteMaintaince`, {
-        // _id: id, // Use the passed id parameter
-        _id: "sdadadad", // Use the passed id parameter
+        _id: id, // Use the passed id parameter
 
       });
 
@@ -106,7 +106,10 @@ const ViewMaintainceDetails = () => {
               <View key={item._id} style={styles.itemContainer}>
                 <Text style={styles.text}>Date: {formatDate(item.updatedAt)}</Text>
                 <Text style={styles.text}>Note: {item.note}</Text>
-                <Text style={styles.text}>Cost: {item.cost}</Text>
+                <Text style={styles.text}>Cost :Rs {item.cost}</Text>
+                <Text style={styles.text}>Tag: {item.userName}</Text>
+
+                
                 <Image source={{ uri: item.imageUrl }} style={styles.photo} />
                 <TouchableOpacity onPress={() => handleDelete(item._id)} style={styles.deleteButton}>
                   <Text style={styles.deleteButtonText}>Delete this Record</Text>
@@ -144,7 +147,7 @@ const ViewMaintainceDetails = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => setModalVisibleOtpSuccess(false)} style={styles.customButtonSuccess}>
               <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
             </TouchableOpacity>
@@ -249,8 +252,8 @@ const styles = StyleSheet.create({
     width:100,
     marginTop:10,
   },
-  customButtonSucess:{
-    backgroundColor: 'blue',
+  customButtonSuccess:{
+    backgroundColor: '#EEA818',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,

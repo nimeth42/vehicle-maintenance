@@ -93,8 +93,8 @@ exports.grageRegister = (req, res, next) => {
 exports.grageRegisterLogin = (req, res, next) => {
   const { userName, password, email } = req.body; // Change variable name from plateNo to userName
 
-  // Find the user in the database based on the provided userName
-  Grage.findOne({ email: email }) // Change field name from plateNo to userName
+  // Find the user in the database based on the provided email
+  Grage.findOne({ email: email }) // Change field name from plateNo to email
     .then(user => {
       // If user not found, return failed status
       if (!user) {
@@ -120,12 +120,12 @@ exports.grageRegisterLogin = (req, res, next) => {
         // If passwords match, generate JWT token
         if (result) {
           // Generate JWT token with user's ID and userName as payload
-          const token = jwt.sign({ userId: user._id, email: user.email }, config.userToken, { expiresIn: '1h' }); // Change field name from plateNo to userName
+          const token = jwt.sign({ userId: user._id, email: user.email }, config.userToken, { expiresIn: '1h' }); // Change field name from plateNo to email
           // Send the token in the response
           return res.status(200).json({
             status: "success",
             comment: "Login successful",
-            data: { userName: userName, email: email }, // Change field name from plateNo to userName
+            data: { userName: user.userName, email: user.email }, // Include userName from the database
             token: token // Send the token in the response
           });
         } else {
@@ -149,4 +149,3 @@ exports.grageRegisterLogin = (req, res, next) => {
       });
     });
 };
-

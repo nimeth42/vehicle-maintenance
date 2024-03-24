@@ -32,7 +32,11 @@ const notificationSchema = mongoose.Schema({
     date: {
         type: Date,
         default: Date.now() // Corrected to Date.now()
-    }
+    },  userName: {
+        type: String,
+        required: "name is required",
+        
+      }
 });
 
 module.exports = mongoose.model("Notification", notificationSchema);

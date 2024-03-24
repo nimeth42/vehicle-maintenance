@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Platform, Modal } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Platform, Modal,SafeAreaView,StatusBar } from 'react-native';
 import { PieChart } from 'react-native-svg-charts';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import baseUrl from '../baseUrl/baseUrl';
@@ -16,6 +16,7 @@ const PieChartPage = () => {
   const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false);
   const [odometer, setOdometer] = useState('');
   const [loading, setLoading] = useState(false); // Add loading state
+  const [message, setMessage] = useState('Select  Date Range to Get Expenses');
 
   const getExpenseColor = (type) => {
     switch (type) {
@@ -62,6 +63,7 @@ const PieChartPage = () => {
           plateNo: storedPlateNo,
           startDate: formattedDate
         });
+        setMessage(); // Change the message when expenses are fetched successfully
 
         setData(response.data.data);
         setLoading(false);
@@ -87,7 +89,9 @@ const PieChartPage = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+            <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
+
       <Text style={styles.topicText}>Pie Chart</Text>
 
       <TouchableOpacity style={styles.datePickerButton} onPress={showDateTimePicker}>
@@ -117,6 +121,9 @@ const PieChartPage = () => {
           </View>
         </>
       )}
+            <Text style={styles.messageText}>{message}</Text>
+
+      
       <Modal
         animationType="slide"
         transparent={true}
@@ -145,14 +152,14 @@ const PieChartPage = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
               <Text style={[styles.buttonText, { textAlign: 'center' }]}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -161,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black',
+    backgroundColor: '#1e1e1e',
   },
   datePickerButton: {
     backgroundColor: '#FFA500',
@@ -221,7 +228,7 @@ const styles = StyleSheet.create({
     width:150,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -237,7 +244,11 @@ const styles = StyleSheet.create({
   },topicText:{
     fontSize:35,
     color:'#FFA500'
-  }
+  },messageText: {
+    fontSize: 20,
+    color: '#FFFFFF',
+    marginBottom: 20,
+  },
 });
 
 export default PieChartPage;

@@ -12,6 +12,9 @@ const OtpPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalVisibleOtpSucess, setModalVisibleOtpSucess] = useState(false); // Added this state variable
+  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [isLoading, setIsLoading] = useState(false); // State variable for loading indicator
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -42,6 +45,7 @@ const OtpPage = () => {
   };
 
   const handleVerifyOtp = async () => {
+
     try {
       const storedPlateNo = await AsyncStorage.getItem('plateNo');
       const storedEmail = await AsyncStorage.getItem('email');
@@ -63,6 +67,8 @@ const OtpPage = () => {
 
   const handleSendOtp = async () => {
     try {
+      setLoading(true); // Show loading indicator
+
       const storedPlateNo = await AsyncStorage.getItem('plateNo');
       const storedEmail = await AsyncStorage.getItem('email');
 
@@ -71,14 +77,30 @@ const OtpPage = () => {
         plateNo: storedPlateNo,
         otpValue: otp
       });
-      
+      setLoading(false); // Hide loading indicator
+
       setModalMessage('OTP send successfully');
       setModalVisibleOtpSucess(true); // Corrected this line
     } catch (error) {
+      setLoading(false); // Hide loading indicator
+
       console.error('Error sending OTP:', error);
       if (error.response) {
         setModalMessage(error.response.data.comment);
-        setModalVisibleOtpSucess(true); // Corrected this line
+        setModalVisible(true); // Corrected this line
+      } else if (error.request) {
+        // Network error occurred
+        console.error('Network error:', error.request);
+        // Set error message or take necessary action for network error
+        // For example, display a message to the user indicating network issue
+        setModalMessage('Network error. Please check your internet connection.');
+        setModalVisible(true);
+      } else {
+        // Something else went wrong
+        console.error('Error:', error.message);
+        // Set error message or take necessary action for other types of errors
+        setModalMessage('An error occurred. Please try again later.');
+        setModalVisible(true);
       }
     }
   };
@@ -136,13 +158,19 @@ const OtpPage = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => setModalVisibleOtpSucess(false)} style={styles.customButtonSucess}>
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#FFA500" />
+          <Text style={styles.loadingText}>Sending OTP...</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -204,32 +232,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
-  },
-  modalText: {
-    marginBottom: 20,
-    fontSize: 18,
-    textAlign: 'center',
-    
+    width: '80%', // Set the width to 80% of the screen width
+    maxWidth: 400, // Maximum width of the modal content
   },
   customButton: {
     backgroundColor: 'red',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
-    width:150,
+    width:100,
+    marginTop:10,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
-    width:150,
-  }
+    width:100,
+    marginTop:10,
+  },buttonText:{
+    textAlign:'center',
+    color:'white',
+    fontSize:18,
+  }, loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },modalText:{
+    fontSize:18
+  },loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FFA500',
+  },
 });
 
 export default OtpPage;

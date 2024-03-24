@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Modal,StatusBar } from 'react-native';
 import axios from 'axios';
 import baseUrl from '../baseUrl/baseUrl';
 import { useNavigation } from '@react-navigation/native';
@@ -50,12 +50,16 @@ const GrageUserLogin = () => {
 
       await AsyncStorage.setItem('token', response.data.token); // Assuming token is returned from backend
       await AsyncStorage.setItem('UserEmail', response.data.data.email);
+      await AsyncStorage.setItem('UserName', response.data.data.userName);
+
 
       const storedToken = await AsyncStorage.getItem('token');
       const userEmail = await AsyncStorage.getItem('UserEmail');
+      const userName = await AsyncStorage.getItem('UserName');
+
 
       console.log("*** "+storedToken);
-      console.log("*** "+userEmail);
+      console.log("*** "+userName);
 
 
       setModalMessage('Successfully login');
@@ -81,6 +85,8 @@ const GrageUserLogin = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+    <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
+
       <Text style={styles.title}>GrageUser SignIn</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Username:</Text>
@@ -161,7 +167,7 @@ const GrageUserLogin = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.modalText, { color: 'blue' }]}>{modalMessage}</Text>
+            <Text style={[styles.modalText, { color: 'black' }]}>{modalMessage}</Text>
             <TouchableOpacity onPress={() => { setModalVisibleOtpSucess(false); navigation.navigate('GrageUser'); }} style={styles.customButtonSucess}>
   <Text style={[styles.buttonText, {textAlign: 'center'}]}>Close</Text>
 </TouchableOpacity>
@@ -171,7 +177,7 @@ const GrageUserLogin = () => {
       </Modal>
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+        <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleSignUpLinkPress}>
         <Text style={styles.signUpLink}>Don't have an account? Sign Up</Text>
@@ -252,7 +258,7 @@ const styles = StyleSheet.create({
     marginTop:10,
   },
   customButtonSucess:{
-    backgroundColor: 'blue',
+    backgroundColor: '#FFA500',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
