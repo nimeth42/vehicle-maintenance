@@ -1,11 +1,11 @@
-// expenseController.js
 
-const mongoose = require("mongoose");
+//expenseController
+const mongoose = require("mongoose"); // importing the mongoose library
 
 
 const Expense = require('../models/expenseModel');
 const User = require('../models/userModel');
-exports.createExpense = async (req, res) => {
+exports.createExpense = async (req, res) => {    // function to create the Expense 
     try {
       const { date, odometer, note, totalCost, selectedExpenseType, plateNo } = req.body;
       console.log("Received date:", date);
