@@ -2,16 +2,17 @@ const multer = require('multer');
 const cloudinary = require("../utils/cloudenary");
 const Maintenance = require("../models/maintanceModel");
 const User = require("../models/userModel");
+const Expense = require('../models/expenseModel');
 
 const upload = require("../middleware/multer");
 
 
-// imageTagValue is True => image display
-// "              " False => doesnt display display
 
 
 exports.addMaintanceDetails = (req, res, next) => {
     console.log(req.body.data);
+    const today = new Date();
+
     try {
         // Use multer middleware to upload image
         upload.single("image")(req, res, async function (err) {
@@ -70,12 +71,32 @@ exports.addMaintanceDetails = (req, res, next) => {
                         // If Maintenance save successful
                         // Return success response
 
+                        try{
+                            const expense = new Expense({
+                                plateNo: plateNo,
+                                date: today, // Today's date
+                                odometer: 0, // Odometer value 0
+                                note: additionalData.note,
+                                totalCost: additionalData.cost,
+                                selectedExpenseType: "repair",
+                                
+                            });
+                            await expense.save();
 
-                        return res.status(200).json({
-                            status: "success",
-                            comment: "Maintenance data saved successfully to database and cloud",
-                            imageUrl: result.secure_url // Uploaded image URL
-                        });
+                            return res.status(200).json({
+                                status: "success",
+                                comment: "Maintenance data saved successfully to database and cloud",
+                                data:"",
+                            });
+                        }catch{
+                            return res.status(400).json({
+                                status: "failed",
+                                comment: "Maintenance data failed  to database and cloud expences ",
+                                data:"",
+                            });
+                        }
+
+                      
 
                        
                     } catch (error) {

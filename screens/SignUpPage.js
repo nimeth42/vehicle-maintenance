@@ -116,7 +116,7 @@ const SignUpPage = () => {
 
           <Text style={styles.textValue}>Vehicle Number</Text>
           <TextInput
-            placeholder="Vehicle Number"
+            placeholder="Vehicle Number (AB0123)"
             placeholderTextColor="black"
             style={[styles.input, { width: 250 }, focusedInput === 'vehicleNumber' && styles.focusedInput]}
             onFocus={() => setFocusedInput('vehicleNumber')}
@@ -181,7 +181,6 @@ const SignUpPage = () => {
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Sign Up</Text>
           </TouchableOpacity>
 
-          <Text style={styles.orText}>-------------   Or continue with   --------------</Text>
 
           
 

@@ -92,7 +92,7 @@ const ViewMaintainceDetails = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor="#222222" />
       <Text style={styles.title}>View Maintenance Details</Text>
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -107,7 +107,8 @@ const ViewMaintainceDetails = () => {
                 <Text style={styles.text}>Date: {formatDate(item.updatedAt)}</Text>
                 <Text style={styles.text}>Note: {item.note}</Text>
                 <Text style={styles.text}>Cost :Rs {item.cost}</Text>
-                <Text style={styles.text}>Tag: {item.userName}</Text>
+                <Text style={styles.text}>Tag by: {item.userName}</Text>
+                <Text style={styles.text}>Tag email: {item.userEmail}</Text>
 
                 
                 <Image source={{ uri: item.imageUrl }} style={styles.photo} />
@@ -193,10 +194,10 @@ const styles = StyleSheet.create({
   },
   photo: {
     width: '100%', // Make the image take up full width
-    height: 200, // Adjust height as needed
-    resizeMode: 'cover', // Adjust resizeMode as needed
+    aspectRatio: 16 / 9, // Example aspect ratio (adjust as needed)
     borderRadius: 10,
   },
+  
   deleteButton: {
     backgroundColor: '#3B3B3B', // Dark gray button color
     alignItems: 'center',

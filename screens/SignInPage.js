@@ -162,7 +162,10 @@ const SignInPage = ({ navigation }) => {
     } else {
       setIsInputFilled(false);
     }
+    // Save email to AsyncStorage with a unique key
+    AsyncStorage.setItem('inputEmail', text);
   };
+  
 
   const handlePasswordChange = (text) => {
     setPassword(text);
@@ -170,6 +173,8 @@ const SignInPage = ({ navigation }) => {
 
   const handleVehicleNumberChange = (text) => {
     setVehicleNumber(text);
+    AsyncStorage.setItem('inputPlateNo', text);
+
   };
 
   return (
@@ -219,7 +224,6 @@ const SignInPage = ({ navigation }) => {
           <TouchableOpacity style={styles.button} onPress={handleHomePage}>
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Sign In</Text>
           </TouchableOpacity>
-          <Text style={styles.orText}>---------------   Or continue with   ----------------</Text>
           <TouchableOpacity style={[styles.button, styles.googleButton]} onPress={handleGrageUser}>
             <Text style={[styles.buttonText, styles.buttonTextBold, styles.googleButtonText]}>Grage User</Text>
           </TouchableOpacity>

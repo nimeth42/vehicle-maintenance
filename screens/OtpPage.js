@@ -23,8 +23,8 @@ const OtpPage = () => {
 
   const getDataFromAsyncStorage = async () => {
     try {
-      const storedEmail = await AsyncStorage.getItem('email');
-      const storedPlateNo = await AsyncStorage.getItem('plateNo');
+      const storedEmail = await AsyncStorage.getItem('inputEmail');
+      const storedPlateNo = await AsyncStorage.getItem('inputPlateNo');
       const obscuredEmail = obscureEmail(storedEmail);
       setEmail(obscuredEmail);
       setPlateNo(storedPlateNo);
@@ -47,8 +47,12 @@ const OtpPage = () => {
   const handleVerifyOtp = async () => {
 
     try {
-      const storedPlateNo = await AsyncStorage.getItem('plateNo');
-      const storedEmail = await AsyncStorage.getItem('email');
+      const storedPlateNo = await AsyncStorage.getItem('inputPlateNo');
+      const storedEmail = await AsyncStorage.getItem('inputEmail');
+      const storedTokenOtp = await AsyncStorage.getItem('tokenOtp');
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${storedTokenOtp}`;
+
 
       const response = await axios.post(`${baseUrl}/api/v1/otp/otpCheck`, {
         email: storedEmail,
@@ -68,22 +72,28 @@ const OtpPage = () => {
   const handleSendOtp = async () => {
     try {
       setLoading(true); // Show loading indicator
-
-      const storedPlateNo = await AsyncStorage.getItem('plateNo');
-      const storedEmail = await AsyncStorage.getItem('email');
-
+  
+      const storedPlateNo = await AsyncStorage.getItem('inputPlateNo');
+      const storedEmail = await AsyncStorage.getItem('inputEmail');
+  
       const response = await axios.post(`${baseUrl}/api/v1/otp/otpSend`, {
         email: storedEmail,
         plateNo: storedPlateNo,
         otpValue: otp
       });
-      setLoading(false); // Hide loading indicator
-
+  
+      const tokenOtp = response.data.data;
+      
+      // Store the OTP 
+      await AsyncStorage.setItem('tokenOtp', tokenOtp);
+  
+      setLoading(false); 
+  
       setModalMessage('OTP send successfully');
-      setModalVisibleOtpSucess(true); // Corrected this line
+      setModalVisibleOtpSucess(true); 
     } catch (error) {
-      setLoading(false); // Hide loading indicator
-
+      setLoading(false); 
+  
       console.error('Error sending OTP:', error);
       if (error.response) {
         setModalMessage(error.response.data.comment);
@@ -104,6 +114,7 @@ const OtpPage = () => {
       }
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>

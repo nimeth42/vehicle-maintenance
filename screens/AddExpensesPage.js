@@ -69,7 +69,7 @@ const AddExpensesPage = () => {
       setModalMessage('successfully added');
       setModalVisibleOtpSucess(true);
     } catch (error) {
-      console.error('Error sending OTP:', error);
+      console.error('Error sending :', error.message);
       if (error.response) {
         console.log(error.response.data.comment);
         setModalMessage(error.response.data.comment);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import PieChartPage from '../screens/PieChartPage';
 import LandingPage from '../screens/LandingPage';
 import OtpPage from '../screens/OtpPage';

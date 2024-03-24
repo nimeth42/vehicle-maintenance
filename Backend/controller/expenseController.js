@@ -5,60 +5,64 @@ const mongoose = require("mongoose"); // importing the mongoose library
 
 const Expense = require('../models/expenseModel');
 const User = require('../models/userModel');
-exports.createExpense = async (req, res) => {    // function to create the Expense 
-    try {
-      const { date, odometer, note, totalCost, selectedExpenseType, plateNo } = req.body; //Destructing propoerties from the request body
-      console.log("Received date:", date);
-  
-      // Parse the date string into a Date object
-      const [day, month, year] = date.split('-');
-      const parsedDate = new Date('${year}-${month}-${day}'); //Creating a new Date Object
-  
-      // Check if any required field is empty
-      if (!parsedDate || !odometer || !note || !totalCost || !selectedExpenseType || !plateNo) {
-        return res.status(400).json({
-          status: false,
-          comment: 'All fields are required', //The comment to be displayed if any required field is empty
-          data: null
-        });
-      }
-  
-      // Check if the plateNo exists in the User model
-      const user = await User.findOne({ plateNo });//Querying the database to find a user based on the provided plate number
-      if (!user) {
-        return res.status(400).json({
-          status: false,
-          comment: 'Invalid plate number', // Comment to indicate a invalid plate number
-          data: null
-        });
-      }
-  
-      // Create the expense
-      const expense = new Expense({
-        date: parsedDate,
-        odometer,
-        note,
-        totalCost,
-        selectedExpenseType,
-        plateNo,
-      });
-  
-      await expense.save(); // Save the expense
-  
-      res.status(201).json({   // Sending JSON response with success code to indicate successful insertion
-        status: "success",
-        comment: "Successfully inserted",
-        data: expense 
-      });
-    } catch (error) {  // catching any errors and sending JSON response with appropriate error message
-      console.error(error);
-      res.status(500).json({ 
+
+exports.createExpense = async (req, res) => {
+  try {
+    const { plateNo, date, odometer, totalCost, selectedExpenseType, note } = req.body;
+
+    // Split the date string into day, month, and year components
+    const [day, month, year] = date.split('-');
+
+    // Construct a Date object using the year, month, and day components
+    // Note: Months in JavaScript Date objects are zero-based (0 for January, 1 for February, etc.)
+    const parsedDate = new Date(year, month - 1, day); // Subtract 1 from month to match JavaScript's zero-based indexing
+
+    // Check if any required field is empty
+    if (!parsedDate || !odometer || !note || !totalCost || !selectedExpenseType || !plateNo) {
+      return res.status(400).json({
         status: false,
-        comment: 'Server Error',
+        comment: 'All fields are required',
         data: null
       });
     }
-  };
+
+    // Check if the plateNo exists in the User model
+    const user = await User.findOne({ plateNo });
+    if (!user) {
+      return res.status(400).json({
+        status: false,
+        comment: 'Invalid plate number',
+        data: null
+      });
+    }
+
+    // Create the expense
+    const expense = new Expense({
+      date: parsedDate,
+      odometer,
+      note,
+      totalCost,
+      selectedExpenseType,
+      plateNo,
+    });
+
+    await expense.save();
+
+    res.status(201).json({
+      status: "success",
+      comment: "Successfully inserted",
+      data: expense
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      comment: 'Server Error',
+      data: null
+    });
+  }
+};
+
   
 
 exports.getExpense = async (req, res) => {  //Function to handle the retrieval of expenses

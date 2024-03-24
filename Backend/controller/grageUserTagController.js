@@ -80,7 +80,8 @@ exports.grageUserTag = (req, res, next) => {
                             cost: additionalData.cost,
                             imageUrl: result.secure_url,
                             imageValueCheck: false,
-                            userName:userName
+                            userName:userName,
+                            userEmail:userEmail
                         });
                         const savedMaintenance = await maintenance.save(); // Save the maintenance object and get the saved document
                         const maintenanceId = savedMaintenance._id; // Get the _id of the saved maintenance object
@@ -95,7 +96,9 @@ exports.grageUserTag = (req, res, next) => {
                                 note: additionalData.note,
                                 notificationFlag: false,
                                 maintanceId: maintenanceId, // Assign the maintenanceId to the notification,
-                                userName:userName
+                                userName:userName,
+                                userEmail:userEmail
+
                             });
                             await notification.save();
 

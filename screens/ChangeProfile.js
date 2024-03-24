@@ -34,6 +34,9 @@ const ChangeProfile = () => {
     }
 
     try {
+      const storedToken = await AsyncStorage.getItem('token');
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       const response = await axios.post(`${baseUrl}/api/v1/user/changeAccount`, {
         plateNo: currentVehicleNumber,
         email: currentEmail,

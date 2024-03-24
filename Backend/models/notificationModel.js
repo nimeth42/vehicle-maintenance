@@ -29,6 +29,15 @@ const notificationSchema = mongoose.Schema({
         ref: 'Maintenance', // References the Maintenance model
         required: [true, "Maintenance ID is required"]
     },
+    userEmail: {
+        type: String,
+        required: "Email is required",
+        minlength: 5,
+        validate: {
+          validator: function(v) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+          },
+        }},
     date: {
         type: Date,
         default: Date.now() // Corrected to Date.now()
@@ -36,7 +45,7 @@ const notificationSchema = mongoose.Schema({
         type: String,
         required: "name is required",
         
-      }
+      },
 });
 
 module.exports = mongoose.model("Notification", notificationSchema);

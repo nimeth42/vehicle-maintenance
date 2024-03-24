@@ -28,6 +28,11 @@ const maintenanceSchema = mongoose.Schema({
     type: String,
     default: "you", // Set default value to "you"
     
+  },userEmail: {
+    type: String,
+    required: "Email is required",
+    default: "your mail", // Set default value to "you"
+
   },
   imageValueCheck:{
     type: Boolean,

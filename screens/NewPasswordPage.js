@@ -23,53 +23,51 @@ const NewPasswordPage = () => {
     }
   };
 
-  const submitPassword = async() => {
-
+  const submitPassword = async () => {
     validatePasswords();
 
-
     try {
-      const storedPlateNo = await AsyncStorage.getItem('plateNo');
-      const storedEmail = await AsyncStorage.getItem('email');
+        const storedPlateNo = await AsyncStorage.getItem('plateNo');
+        const storedEmail = await AsyncStorage.getItem('email');
+        const storedTokenOtp = await AsyncStorage.getItem('tokenOtp');
 
-      console.log(storedPlateNo, storedEmail);
+        console.log(storedPlateNo, storedEmail);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storedTokenOtp}`;
 
-      const response = await axios.post(`${baseUrl}/api/v1/user/changePassword`, {
-        email: storedEmail,
-        plateNo: storedPlateNo,
-        password:password
-      });
-      
-      console.log('Response from backend:', response.data);
-      
-      setModalMessage('Success');
-      setModalVisibleOtpSucess(true);
-      navigation.navigate('SignInPage');
+        const response = await axios.post(`${baseUrl}/api/v1/user/changePassword`, {
+            email: storedEmail,
+            plateNo: storedPlateNo,
+            password: password
+        });
+
+        console.log('Response from backend:', response.data);
+
+        setModalMessage('Success');
+        setModalVisibleOtpSucess(true);
+
+        setTimeout(() => {
+            navigation.navigate('SignInPage'); 
+        }, 3000); 
 
     } catch (error) {
-      console.log(error);
-      // console.error('Error sending OTP:', error);
-      if (error.response) {
-        setModalMessage(error.response.data.comment);
-        setModalVisible(true);
-      }else if (error.request) {
-        // Network error occurred
-        console.error('Network error:', error.request);
-        // Set error message or take necessary action for network error
-        // For example, display a message to the user indicating network issue
-        setModalMessage('Network error. Please check your internet connection.');
-        setModalVisible(true);
-      } else {
-        // Something else went wrong
-        console.error('Error:', error.message);
-        // Set error message or take necessary action for other types of errors
-        setModalMessage('An error occurred. Please try again later.');
-        setModalVisible(true);
-      }
+        console.log(error);
+        if (error.response) {
+            setModalMessage(error.response.data.comment);
+            setModalVisible(true);
+        } else if (error.request) {
+            // Network error occurred
+            console.error('Network error:', error.request);
+            setModalMessage('Network error. Please check your internet connection.');
+            setModalVisible(true);
+        } else {
+            // Something else went wrong
+            console.error('Error:', error.message);
+            setModalMessage('An error occurred. Please try again later.');
+            setModalVisible(true);
+        }
     }
-    // navigation.navigate('SignInPage'); // Navigate to the SignUp screen
-  };
-  
+};
+
 
   return (
     <View style={styles.container}>

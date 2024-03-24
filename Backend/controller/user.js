@@ -11,11 +11,19 @@ const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
-
 exports.driverRegister = (req, res, next) => {
   const plateNo = req.body.plateNo;
   const email = req.body.email;
   const password = req.body.password;
+
+  // Check if any of the required fields are empty
+  if (!plateNo || !email || !password) {
+    return res.status(400).json({
+      status: "failed",
+      comment: "Plate number, email, and password are required fields",
+      data: null,
+    });
+  }
 
   // Validate email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,6 +43,17 @@ exports.driverRegister = (req, res, next) => {
       data: null,
     });
   }
+// Validate plate number
+const plateNoRegex = /^[A-Za-z\d]+$/;
+if (!plateNoRegex.test(plateNo)) {
+  return res.status(400).json({
+    status: "failed",
+    comment: "Plate number must be alphanumeric",
+    data: null,
+  });
+}
+
+  
 
   // Check if the plateNo already exists in the database
   User.findOne({ plateNo: plateNo })
@@ -96,11 +115,41 @@ exports.driverRegister = (req, res, next) => {
     });
 };
 
-
 exports.driverLogin = (req, res, next) => {
   const { plateNo, password,email } = req.body;
   
+    // Check if any of the required fields are empty
+    if (!plateNo || !email || !password) {
+      return res.status(400).json({
+        status: "failed",
+        comment: "Plate number, email, and password are required fields",
+        data: null,
+      });
+    }
 
+    
+
+
+
+  // Validate email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      status: "failed",
+      comment: "Invalid email address",
+      data: null,
+    });
+  }
+
+  // Validate plate number
+const plateNoRegex = /^[A-Za-z\d]+$/;
+if (!plateNoRegex.test(plateNo)) {
+  return res.status(400).json({
+    status: "failed",
+    comment: "Plate number must be alphanumeric",
+    data: null,
+  });
+}
   // Find the user in the database based on the provided plateNo
   User.findOne({ plateNo: plateNo })
     .then(user => {

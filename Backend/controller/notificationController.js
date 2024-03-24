@@ -150,19 +150,7 @@ exports.deleteOne = async (req, res, next) => {
             });
         }
 
-        // // Find the maintenance record
-        // const maintenanceRecord = await Maintenance.findOne({ _id });
-        // if (!maintenanceRecord) {
-        //     return res.status(404).json({
-        //         status: 'failed',
-        //         comment: 'No maintenance record found for the provided _id',
-        //         data: null
-        //     });
-        // }
-
-        // // Update the maintenance record
-        // maintenanceRecord.imageValueCheck = false;
-        // await maintenanceRecord.save();
+       
 
         return res.status(200).json({
             status: 'success',

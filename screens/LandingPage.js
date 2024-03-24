@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, ImageBackground, View, TouchableOpacity, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 
 const LandingPage = ()=> {
   const navigation = useNavigation(); // Get the navigation object
 
-  const navigateToSignIn = () => {
-    navigation.navigate('SignInPage'); // Navigate to the SignInPage
-  };
+  useEffect(() => {
+    // Navigate to SignInPage after 3 seconds (adjust the duration as needed)
+    const navigateToSignIn = setTimeout(() => {
+      navigation.replace('SignInPage'); // Navigate to the SignInPage
+    }, 4000); // 3000 milliseconds = 3 seconds
+
+    // Clear the timeout when the component is unmounted
+    return () => clearTimeout(navigateToSignIn);
+  }, [navigation]); // Dependency array with navigation as a dependency
 
   return (
     <ImageBackground source={require('../assets/assets/bg5.jpg')} style={styles.backgroundImage}>
+      
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View style={styles.content}>
         <Text style={styles.title}>DRIVELANKA</Text>
         <Text style={styles.titleSecond}>All in one vehicle partner</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={navigateToSignIn}>
-        <Text style={styles.buttonText}>Let's Start</Text>
-      </TouchableOpacity>
+    
     </ImageBackground>
   );
 };

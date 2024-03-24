@@ -127,8 +127,7 @@ const AddMaintainceDetails = () => {
         <SafeAreaView style={styles.container}>
         <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
 
-            <Text style={styles.heading}>Add Maintenance Details</Text>
-            <Text style={styles.textTopic}>Real time updates</Text>
+            <Text style={styles.heading}>Maintenance Details</Text>
             <Text style={styles.normalText}>Enter note about maintenance</Text>
             <TextInput
                 style={styles.input}
@@ -249,11 +248,11 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     heading: {
-        fontSize: 28,
+        fontSize: 25,
         fontWeight: 'bold',
         color: '#FFA500',
-        marginTop: 10,
-        marginBottom: 20,
+        marginTop: 1,
+        marginBottom: 10,
     },
     input: {
         marginBottom: 20,
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
         width: 250, // Added width to input fields
     },
     normalText: {
-        fontSize: 15,
+        fontSize: 16,
         color: 'white',
         marginTop: 5,
         marginBottom: 5,

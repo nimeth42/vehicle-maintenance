@@ -166,7 +166,8 @@ const ViewMaintenanceDetails = () => {
             <View key={item._id} style={[styles.itemContainer, { backgroundColor: item.notificationFlag ? '#a9a9a9' : '#EEA818' }]}>
 <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Date: {formatDate(item.date)}</Text>
               <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Note: {item.note}</Text>
-              <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Tag: {item.userName}</Text>
+              <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Tag by: {item.userName}</Text>
+              <Text style={[styles.text, { color: item.viewFlag ? 'white' : 'black' }]}>Tag email: {item.userEmail}</Text>
 
               <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={() => handleAccept(item._id)} style={[styles.button, styles.acceptButton]}>
