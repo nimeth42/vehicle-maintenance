@@ -7,12 +7,12 @@ const Expense = require('../models/expenseModel');
 const User = require('../models/userModel');
 exports.createExpense = async (req, res) => {    // function to create the Expense 
     try {
-      const { date, odometer, note, totalCost, selectedExpenseType, plateNo } = req.body;
+      const { date, odometer, note, totalCost, selectedExpenseType, plateNo } = req.body; //Destructing propoerties from the request body
       console.log("Received date:", date);
   
       // Parse the date string into a Date object
       const [day, month, year] = date.split('-');
-      const parsedDate = new Date('${year}-${month}-${day}');
+      const parsedDate = new Date('${year}-${month}-${day}'); //Creating a new Date Object
   
       // Check if any required field is empty
       if (!parsedDate || !odometer || !note || !totalCost || !selectedExpenseType || !plateNo) {
