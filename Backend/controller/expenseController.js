@@ -82,10 +82,10 @@ exports.getExpense = async (req, res) => {  //Function to handle the retrieval o
       ]);
   
       if (totalExpense.length === 0) {
-        return res.status(404).json({ success: 'failed', comment: 'No expenses found' });
+        return res.status(404).json({ success: 'failed', comment: 'No expenses found' });//If no expenses found return this JSON response
       }
   
-      const totalCost = totalExpense[0].totalCost;
+      const totalCost = totalExpense[0].totalCost; //Retrieving total cost of expenses from the totalExpense array
   
       // Aggregate pipeline to calculate cost for each expense category between startDate and endDate
       const expenseCosts = await Expense.aggregate([
