@@ -91,13 +91,13 @@ exports.getExpense = async (req, res) => {  //Function to handle the retrieval o
       const expenseCosts = await Expense.aggregate([
         { $match: { plateNo, date: { $gte: new Date(startDate), $lte: endDate } } }, // Match expenses for the given plateNo within the date range
         {
-          $group: {
+          $group: {//Grouping expenses by the selectedExpenseType and calculating the total cost for each category
             _id: "$selectedExpenseType", // Group by selectedExpenseType
             totalCost: { $sum: "$totalCost" } // Calculate the total cost for each category within the date range
           }
         },
         {
-          $project: {
+          $project: {//projecting the results to reshape the data 
             _id: 0,
             selectedExpenseType: "$_id",
             totalCost: 1
