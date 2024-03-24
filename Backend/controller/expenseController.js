@@ -18,17 +18,17 @@ exports.createExpense = async (req, res) => {    // function to create the Expen
       if (!parsedDate || !odometer || !note || !totalCost || !selectedExpenseType || !plateNo) {
         return res.status(400).json({
           status: false,
-          comment: 'All fields are required',
+          comment: 'All fields are required', //The comment to be displayed if any required field is empty
           data: null
         });
       }
   
       // Check if the plateNo exists in the User model
-      const user = await User.findOne({ plateNo });
+      const user = await User.findOne({ plateNo });//Querying the database to find a user based on the provided plate number
       if (!user) {
         return res.status(400).json({
           status: false,
-          comment: 'Invalid plate number',
+          comment: 'Invalid plate number', // Comment to indicate a invalid plate number
           data: null
         });
       }
