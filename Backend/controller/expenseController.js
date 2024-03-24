@@ -61,7 +61,7 @@ exports.createExpense = async (req, res) => {    // function to create the Expen
   };
   
 
-exports.getExpense = async (req, res) => {
+exports.getExpense = async (req, res) => {  //Function to handle the retrieval of expenses
     try {
       const startDate = req.body.startDate;
       const plateNo = req.body.plateNo;
@@ -69,7 +69,7 @@ exports.getExpense = async (req, res) => {
       // Check if plateNo exists in the User model
       const user = await User.findOne({ plateNo });
       if (!user) {
-        return res.status(404).json({ success: 'failed', comment: 'User not found' });
+        return res.status(404).json({ success: 'failed', comment: 'User not found' }); //if the plateNo does not exists , it returns this JSON response
       }
   
       // Calculate today's date
