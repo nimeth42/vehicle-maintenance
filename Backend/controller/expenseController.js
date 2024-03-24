@@ -45,12 +45,12 @@ exports.createExpense = async (req, res) => {    // function to create the Expen
   
       await expense.save(); // Save the expense
   
-      res.status(201).json({ 
+      res.status(201).json({   // Sending JSON response with success code to indicate successful insertion
         status: "success",
         comment: "Successfully inserted",
         data: expense 
       });
-    } catch (error) {
+    } catch (error) {  // catching any errors and sending JSON response with appropriate error message
       console.error(error);
       res.status(500).json({ 
         status: false,
