@@ -121,13 +121,13 @@ exports.getExpense = async (req, res) => {  //Function to handle the retrieval o
       result.percentage = {};
       // Loop through all expense types and calculate the percentage
       ['fuel', 'insurance', 'repair', 'miscellaneous', 'other'].forEach(type => {
-        result.percentage[type] = totalCost === 0 ? 0 : Math.round((result[type] / totalCost) * 100);
+        result.percentage[type] = totalCost === 0 ? 0 : Math.round((result[type] / totalCost) * 100);// Calculate the percentage of each expense type relative to the total cost and store in the percentage object
       });
   
-      res.status(200).json({ success: 'sucess', comment:"sucessfully ",data: result });
+      res.status(200).json({ success: 'sucess', comment:"sucessfully ",data: result });// Sending JSON response with the success code and message to indicate the successful completion
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: 'failed',comment: 'Server Error',data:null });
+      res.status(500).json({ success: 'failed',comment: 'Server Error',data:null }); //catching any errors and sending JSON response with status code along with the error message
     }
 
   
