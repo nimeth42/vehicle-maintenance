@@ -159,7 +159,7 @@ const ViewMaintenanceDetails = () => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
-      <Text style={styles.title}>Notifcation</Text>
+      <Text style={styles.title}>Notification</Text>
       <ScrollView style={styles.scrollView}>
         <View style={styles.subContainer}>
           {maintenanceData.map((item) => (
