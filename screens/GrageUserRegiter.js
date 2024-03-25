@@ -64,7 +64,7 @@ const GrageUserRegister = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>GrageUser Signup</Text>
+      <Text style={styles.title}>GarageUser Signup</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Username:</Text>
         <TextInput

@@ -225,7 +225,7 @@ const SignInPage = ({ navigation }) => {
             <Text style={[styles.buttonText, styles.buttonTextBold]}>Sign In</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, styles.googleButton]} onPress={handleGrageUser}>
-            <Text style={[styles.buttonText, styles.buttonTextBold, styles.googleButtonText]}>Grage User</Text>
+            <Text style={[styles.buttonText, styles.buttonTextBold, styles.googleButtonText]}>Garage User</Text>
           </TouchableOpacity>
           <View style={styles.loginContainer}>
             <Text style={styles.normalText}>Don't have an account? </Text>

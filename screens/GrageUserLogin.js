@@ -87,7 +87,7 @@ const GrageUserLogin = () => {
     <SafeAreaView style={styles.container}>
     <StatusBar backgroundColor="#1e1e1e" barStyle="light-content" />
 
-      <Text style={styles.title}>GrageUser SignIn</Text>
+      <Text style={styles.title}>GarageUser SignIn</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Username:</Text>
         <TextInput

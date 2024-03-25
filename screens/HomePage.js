@@ -123,7 +123,7 @@ function HomePage() {
       <Text style={styles.text}>DRIVE  LANKA</Text>
 
       <View style={styles.vehicleNumberContainer}>
-        <Text style={styles.vehicleNumberText}>Plate No: {vehicleNumber}</Text>
+        <Text style={styles.vehicleNumberText}>No: {vehicleNumber}</Text>
         <NotificationButton
           onPress={handleNotification}
           hasUnreadNotifications={unreadNotifications}
