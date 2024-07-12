@@ -13,7 +13,7 @@ Team Members
 
 • Rajiinda Samarasinghe
 
-
+Removed the backed from the AWS server so run the backend also
 
 
 
