@@ -1,19 +1,19 @@
-﻿DriveLanka
-SDGP project repository for team Code94 (SE-79)
+﻿# DriveLanka
+<p> SDGP project repository for team Code94 (SE-79)
 
-Team Members
+<br> Team Members
 
-• Sandeepa Fernando
+<br> • Sandeepa Fernando
 
-• Nimeth Fernando
+<br> • Nimeth Fernando
 
-• Thewmika Randinu
+<br> • Thewmika Randinu
 
-• Oshada Premalal
+<br> • Oshada Premalal
 
-• Rajiinda Samarasinghe
+<br> • Rajiinda Samarasinghe
 
-Removed the backed from the AWS server so run the backend also
+Removed the backed from the AWS server so run the backend also </p>
 
 
 
