@@ -4,13 +4,9 @@
 <br> Team Members
 
 <br> • Sandeepa Fernando
-
 <br> • Nimeth Fernando
-
 <br> • Thewmika Randinu
-
 <br> • Oshada Premalal
-
 <br> • Rajiinda Samarasinghe
 
 Removed the backed from the AWS server so run the backend also </p>
